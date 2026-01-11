@@ -10,10 +10,9 @@ import GlobalComponents from './globalComponents';
 import GlobalDirectives from './globalDirectives';
 
 // element ui language configuration
-import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
-
-locale.use(lang);
+// Use default English locale
+locale.use({});
 
 // asset imports
 
