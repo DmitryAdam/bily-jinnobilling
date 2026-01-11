@@ -68,104 +68,115 @@ const dashboard = new Vue({
 
         this.getWidgets();
 
-        // dashboard slider starting
-        const slider = document.getElementById('dashboard-slider');
-        const scrollLeft = document.getElementById('dashboard-left');
-        const scrollRight = document.getElementById('dashboard-right');
-
-        // Check if elements exist before adding event listeners
-        if (scrollLeft && scrollRight && slider) {
-            scrollLeft.addEventListener('click', () => scrollToItem('left'));
-            scrollRight.addEventListener('click', () => scrollToItem('right'));
-        }
-
-        function scrollToItem(direction) {
-            // Safety check for elements
-            if (!slider || !scrollLeft || !scrollRight) return;
-            
-            if (direction == 'right') {
-                scrollLeft.classList.add('text-purple');
-                scrollLeft.classList.remove('text-purple-200');
-                scrollLeft.removeAttribute('disabled');
-            }
-
-            if (direction == 'left') {
-                scrollRight.classList.add('text-purple');
-                scrollRight.classList.remove('text-purple-200');
-
-                scrollRight.removeAttribute('disabled');
-            }
-
-            const visibleItems = Array.from(slider.children);
-            const sliderRect = slider.getBoundingClientRect();
-
-            const currentIndex = visibleItems.findIndex(item => {
-                const itemRect = item.getBoundingClientRect();
-
-                return itemRect.left >= sliderRect.left && itemRect.right <= sliderRect.right;
-            });
-
-            const nextIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1;
-
-            if (nextIndex == 0) {
-                scrollLeft.classList.add('text-purple-200');
-                scrollLeft.classList.remove('text-purple');
-
-                scrollLeft.setAttribute('disabled', 'disabled');
-            }
-
-            if (nextIndex >= 0 && nextIndex < visibleItems.length) {
-                const nextItem = visibleItems[nextIndex];
-
-                slider.scrollBy({ 
-                    left: nextItem.getBoundingClientRect().left - sliderRect.left,
-                    behavior: 'smooth'
-                });
-            }
-
-            const tolerance = 5; // Pixel tolerance
-
-            if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - tolerance) {
-                scrollRight.classList.add('text-purple-200');
-                scrollRight.classList.remove('text-purple');
-
-                scrollRight.setAttribute('disabled', 'disabled');
-            }
-        }
-
-        function updateSlider() {
-            // Safety check for slider element
-            if (!slider || !scrollLeft || !scrollRight) return;
-            
-            const sliderWidth = slider.clientWidth;
-            const windowWidth = window.innerWidth;
-
-            if (sliderWidth <= 850) {
-                slider.parentElement.classList.remove('w-9/12', 'w-8/12');
-
-                scrollLeft.classList.add('hidden');
-                scrollRight.classList.add('hidden');
-            } else {
-                if (windowWidth < 1396) {
-                    slider.parentElement.classList.remove('w-9/12');
-                    slider.parentElement.classList.add('w-8/12');
-                } else {
-                    slider.parentElement.classList.remove('w-8/12');
-                    slider.parentElement.classList.add('w-9/12');
-                }
-
-                scrollLeft.classList.remove('hidden');
-                scrollRight.classList.remove('hidden');
-            }
-        }
-
-        updateSlider();
-
-        window.addEventListener('resize', updateSlider);
-        // dashboard slider ending
+        // Wait for DOM to be fully ready
+        this.$nextTick(() => {
+            this.initDashboardSlider();
+        });
     },
 
     methods:{
+        // Initialize dashboard slider with safety checks
+        initDashboardSlider() {
+            // dashboard slider starting
+            const slider = document.getElementById('dashboard-slider');
+            const scrollLeft = document.getElementById('dashboard-left');
+            const scrollRight = document.getElementById('dashboard-right');
+
+            // Check if elements exist before adding event listeners
+            if (!scrollLeft || !scrollRight || !slider) {
+                console.warn('Dashboard slider elements not found');
+                return;
+            }
+
+            const scrollToItem = (direction) => {
+                // Safety check for elements
+                if (!slider || !scrollLeft || !scrollRight) return;
+                
+                if (direction == 'right') {
+                    scrollLeft.classList.add('text-purple');
+                    scrollLeft.classList.remove('text-purple-200');
+                    scrollLeft.removeAttribute('disabled');
+                }
+
+                if (direction == 'left') {
+                    scrollRight.classList.add('text-purple');
+                    scrollRight.classList.remove('text-purple-200');
+
+                    scrollRight.removeAttribute('disabled');
+                }
+
+                const visibleItems = Array.from(slider.children);
+                const sliderRect = slider.getBoundingClientRect();
+
+                const currentIndex = visibleItems.findIndex(item => {
+                    const itemRect = item.getBoundingClientRect();
+
+                    return itemRect.left >= sliderRect.left && itemRect.right <= sliderRect.right;
+                });
+
+                const nextIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1;
+
+                if (nextIndex == 0) {
+                    scrollLeft.classList.add('text-purple-200');
+                    scrollLeft.classList.remove('text-purple');
+
+                    scrollLeft.setAttribute('disabled', 'disabled');
+                }
+
+                if (nextIndex >= 0 && nextIndex < visibleItems.length) {
+                    const nextItem = visibleItems[nextIndex];
+
+                    slider.scrollBy({ 
+                        left: nextItem.getBoundingClientRect().left - sliderRect.left,
+                        behavior: 'smooth'
+                    });
+                }
+
+                const tolerance = 5; // Pixel tolerance
+
+                if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - tolerance) {
+                    scrollRight.classList.add('text-purple-200');
+                    scrollRight.classList.remove('text-purple');
+
+                    scrollRight.setAttribute('disabled', 'disabled');
+                }
+            };
+
+            const updateSlider = () => {
+                // Safety check for slider element
+                if (!slider || !scrollLeft || !scrollRight) return;
+                
+                const sliderWidth = slider.clientWidth;
+                const windowWidth = window.innerWidth;
+
+                if (sliderWidth <= 850) {
+                    slider.parentElement.classList.remove('w-9/12', 'w-8/12');
+
+                    scrollLeft.classList.add('hidden');
+                    scrollRight.classList.add('hidden');
+                } else {
+                    if (windowWidth < 1396) {
+                        slider.parentElement.classList.remove('w-9/12');
+                        slider.parentElement.classList.add('w-8/12');
+                    } else {
+                        slider.parentElement.classList.remove('w-8/12');
+                        slider.parentElement.classList.add('w-9/12');
+                    }
+
+                    scrollLeft.classList.remove('hidden');
+                    scrollRight.classList.remove('hidden');
+                }
+            };
+
+            // Add event listeners
+            scrollLeft.addEventListener('click', () => scrollToItem('left'));
+            scrollRight.addEventListener('click', () => scrollToItem('right'));
+
+            updateSlider();
+            window.addEventListener('resize', updateSlider);
+            // dashboard slider ending
+        },
+
         // Get All Widgets
         getWidgets() {
             var self = this;
