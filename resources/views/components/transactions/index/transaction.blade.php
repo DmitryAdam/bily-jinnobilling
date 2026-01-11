@@ -83,6 +83,14 @@
                 @endif
                 @stack('contact_and_document_th_end')
 
+                @stack('description_th_start')
+                <x-table.th class="w-3/12" hidden-mobile>
+                    @stack('description_inside_th_start')
+                    <x-sortablelink column="description" title="{{ trans('general.description') }}" />
+                    @stack('description_inside_th_end')
+                </x-table.th>
+                @stack('description_th_end')
+
                 @stack('amount_th_start')
                 @if (! $hideAmount)
                 <x-table.th class="{{ $classAmount }}" kind="amount">
@@ -192,6 +200,16 @@
                     </x-table.td>
                     @endif
                     @stack('contact_and_document_td_end')
+
+                    @stack('description_td_start')
+                    <x-table.td class="w-3/12" hidden-mobile>
+                        @stack('description_td_inside_start')
+                        <div class="truncate" title="{{ $item->description }}">
+                            {{ $item->description ?: '-' }}
+                        </div>
+                        @stack('description_td_inside_end')
+                    </x-table.td>
+                    @stack('description_td_end')
 
                     @stack('amount_td_start')
                     @if (! $hideAmount)
