@@ -73,10 +73,16 @@ const dashboard = new Vue({
         const scrollLeft = document.getElementById('dashboard-left');
         const scrollRight = document.getElementById('dashboard-right');
 
-        scrollLeft.addEventListener('click', () => scrollToItem('left'));
-        scrollRight.addEventListener('click', () => scrollToItem('right'));
+        // Check if elements exist before adding event listeners
+        if (scrollLeft && scrollRight && slider) {
+            scrollLeft.addEventListener('click', () => scrollToItem('left'));
+            scrollRight.addEventListener('click', () => scrollToItem('right'));
+        }
 
         function scrollToItem(direction) {
+            // Safety check for elements
+            if (!slider || !scrollLeft || !scrollRight) return;
+            
             if (direction == 'right') {
                 scrollLeft.classList.add('text-purple');
                 scrollLeft.classList.remove('text-purple-200');
@@ -128,6 +134,9 @@ const dashboard = new Vue({
         }
 
         function updateSlider() {
+            // Safety check for slider element
+            if (!slider || !scrollLeft || !scrollRight) return;
+            
             const sliderWidth = slider.clientWidth;
             const windowWidth = window.innerWidth;
 
