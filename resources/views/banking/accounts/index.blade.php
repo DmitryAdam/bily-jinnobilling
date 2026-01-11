@@ -24,6 +24,34 @@
                 bulk-action="App\BulkActions\Banking\Accounts"
             />
 
+            <!-- Total Balance Summary -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ trans('accounts.total_balance') }}</h3>
+                        <p class="text-sm text-gray-500">{{ trans('accounts.total_balance_description') }}</p>
+                    </div>
+                    <div class="text-right">
+                        @if (count($balances_by_currency) > 1)
+                            <!-- Multiple currencies -->
+                            <div class="space-y-1">
+                                @foreach ($formatted_balances as $formatted_balance)
+                                    <div class="text-lg font-bold text-green-600">{{ $formatted_balance }}</div>
+                                @endforeach
+                            </div>
+                        @else
+                            <!-- Single currency -->
+                            <div class="text-2xl font-bold text-green-600">
+                                {{ $total_balance_formatted }}
+                            </div>
+                        @endif
+                        <div class="text-sm text-gray-500 mt-1">
+                            {{ trans_choice('general.accounts', count($accounts)) }}: {{ count($accounts) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <x-table>
                 <x-table.thead>
                     <x-table.tr>

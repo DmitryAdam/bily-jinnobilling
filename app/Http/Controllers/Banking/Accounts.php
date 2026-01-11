@@ -24,8 +24,28 @@ class Accounts extends Controller
     public function index()
     {
         $accounts = Account::with('income_transactions', 'expense_transactions')->collect();
+        
+        // Calculate total balance by currency
+        $balances_by_currency = [];
+        foreach ($accounts as $account) {
+            $currency = $account->currency_code;
+            if (!isset($balances_by_currency[$currency])) {
+                $balances_by_currency[$currency] = 0;
+            }
+            $balances_by_currency[$currency] += $account->balance;
+        }
+        
+        // Format balances by currency
+        $formatted_balances = [];
+        foreach ($balances_by_currency as $currency => $balance) {
+            $formatted_balances[] = money($balance, $currency)->format();
+        }
+        
+        // For single currency or primary display, use default currency total
+        $total_balance = $accounts->sum('balance');
+        $total_balance_formatted = money($total_balance, default_currency())->format();
 
-        return $this->response('banking.accounts.index', compact('accounts'));
+        return $this->response('banking.accounts.index', compact('accounts', 'total_balance', 'total_balance_formatted', 'balances_by_currency', 'formatted_balances'));
     }
 
     /**

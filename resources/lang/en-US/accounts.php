@@ -7,6 +7,8 @@ return [
     'number'                => 'Account Number',
     'opening_balance'       => 'Starting Balance',
     'current_balance'       => 'Current Balance',
+    'total_balance'         => 'Total Balance',
+    'total_balance_description' => 'Sum of all account balances',
     'bank_name'             => 'Bank Name',
     'bank_phone'            => 'Bank Phone',
     'bank_address'          => 'Bank Address',

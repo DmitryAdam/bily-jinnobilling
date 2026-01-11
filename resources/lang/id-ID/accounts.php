@@ -7,6 +7,8 @@ return [
     'number'                => 'Nomor Rekening',
     'opening_balance'       => 'Saldo Awal',
     'current_balance'       => 'Saldo Saat Ini',
+    'total_balance'         => 'Total Saldo',
+    'total_balance_description' => 'Jumlah dari semua saldo rekening',
     'bank_name'             => 'Nama Bank',
     'bank_phone'            => 'Telepon Bank',
     'bank_address'          => 'Alamat Bank',

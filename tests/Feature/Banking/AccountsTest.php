@@ -16,6 +16,19 @@ class AccountsTest extends FeatureTestCase
             ->assertSeeText(trans_choice('general.accounts', 2));
     }
 
+    public function testItShouldShowTotalBalanceOnAccountListPage()
+    {
+        // Create test accounts with different balances
+        $account1 = $this->dispatch(new CreateAccount(Account::factory()->enabled()->raw(['opening_balance' => 1000])));
+        $account2 = $this->dispatch(new CreateAccount(Account::factory()->enabled()->raw(['opening_balance' => 2000])));
+
+        $this->loginAs()
+            ->get(route('accounts.index'))
+            ->assertStatus(200)
+            ->assertSeeText(trans('accounts.total_balance'))
+            ->assertSeeText(trans('accounts.total_balance_description'));
+    }
+
     public function testItShouldSeeAccountCreatePage()
     {
         $this->loginAs()
