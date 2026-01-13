@@ -19,6 +19,7 @@
         <slot name="date">
             <flat-picker
                 v-if="show_date"
+                ref="flatpickrFilter"
                 @on-open="onInputFocus"
                 @blur="onBlur"
                 :config="dateConfig"
@@ -26,7 +27,8 @@
                 :class="!show_icon ? 'ltr:pr-4 rtl:pl-4' : 'ltr:pr-10 rtl:pl-10'"
                 :placeholder="dynamicPlaceholder"
                 :ref="'input-search-date-field-' + id"
-                value=""
+                :modelValue="''"
+                :value="''"
                 @focus="onInputFocus"
                 @on-close="onInputDateSelected"
                 @keyup.enter="onInputConfirm"
@@ -113,8 +115,17 @@
                 show_button: false,
                 show_close_icon: false,
                 show_icon: true,
+                input_focus: false,
                 defaultPlaceholder: this.placeholder,
                 dynamicPlaceholder: this.placeholder,
+                
+                // Date picker configuration
+                dateConfig: {
+                    allowInput: true,
+                    altFormat: "d M Y",
+                    altInput: true,
+                    dateFormat: "Y-m-d",
+                },
             };
         },
 
@@ -122,23 +133,13 @@
             onInputFocus() {
                 this.show_button = true;
 
-                if (!this.filter_list.length) {
-                    return;
-                }
-
-                if (this.filter_last_step != 'values'
-                    || (this.filter_last_step == 'values' && this.selected_options[this.filter_index].type != 'date')
-                ) {
-                    this.visible[this.filter_last_step] = true;
-
+                // For date picker, show it directly
+                if (this.show_date) {
                     this.$nextTick(() => {
-                        this.$refs['input-search-field-' + this._uid].focus();
-                    });
-                } else {
-                    this.show_date = true;
-
-                    this.$nextTick(() => {
-                        this.$refs['input-search-date-field-' + this._uid].fp.open();
+                        const flatpickrRef = this.$refs['input-search-date-field-' + this.id];
+                        if (flatpickrRef && flatpickrRef.fp && typeof flatpickrRef.fp.open === 'function') {
+                            flatpickrRef.fp.open();
+                        }
                     });
                 }
 
@@ -152,127 +153,32 @@
             onInput(evt) {
                 this.search = evt.target.value;
                 this.show_button = true;
-
-                let option_url = this.selected_options.length > 0 && this.selected_options[this.filter_index] !== undefined ? this.selected_options[this.filter_index].url : '';
-
-                if (this.search) {
-                    if (option_url.indexOf('?') === -1) {
-                        option_url += '?search="' + this.search + '" limit:10';
-                    } else {
-                        if (option_url.indexOf('search=') === -1) {
-                            option_url += '&search="' + this.search + '" limit:10';
-                        } else {
-                            option_url += ' "' + this.search + '" limit:10';
-                        }
-                    }
-                }
-
-                if (option_url) {
-                    if (option_url.indexOf('limit') === -1) {
-                        option_url += ' limit:10';
-                    }
-
-                    window.axios.get(option_url)
-                    .then(response => {
-                        this.values = [];
-
-                        let data = response.data.data;
-
-                        data.forEach(function (item) {
-                            this.values.push({
-                                key: item.id,
-                                value: item.name
-                            });
-                        }, this);
-
-                        this.option_values[value] = this.values;
-                    })
-                    .catch(error => {
-
-                    });
-                }
-
                 this.$emit('input', evt.target.value);
             },
 
+            onInputDateSelected() {
+                // Handle date selection
+                this.show_button = true;
+            },
+
+            onSearchAndFilterClear() {
+                this.search = '';
+                this.show_date = false;
+                this.show_button = false;
+                this.show_close_icon = false;
+                this.dynamicPlaceholder = this.defaultPlaceholder;
+            },
+
             onInputConfirm() {
+                if (!this.search) {
+                    return;
+                }
+
+                // Simple search functionality
                 let path = window.location.href.replace(window.location.search, '');
-                let list = getQueryVariable('list_records');
-                let args = '';
-                let sign = '?';
-                let redirect = true;
-
-                if (list) {
-                    args = '?list_records=' + list;
-                    sign = '&';
-                }
-
-                if (this.search) {
-                    args += sign + 'search="' + this.search + '" ';
-                    sign = '&';
-                }
-
-                let now = new Date();
-                now.setTime(now.getTime() + 1 * 3600 * 1000);
-                let expires = now.toUTCString();
-
-                let search_string = {};
-                search_string[path] = {};
-
-                this.filtered.forEach(function (filter, index) {
-                    if (list) {
-                        args += sign + 'search=';
-                    }
-
-                    if (! args) {
-                        args += sign + 'search=';
-                    }
-
-                    if (! this.selected_operator.length || ! this.selected_values.length) {
-                        redirect = false;
-                        return;
-                    }
-
-                    if (this.selected_operator[index].key == '!=') {
-                        args += 'not ';
-                    }
-
-                    if (this.selected_operator[index].key == '><') {
-                        let dates = this.selected_values[index].key.split('-to-');
-
-                        args += this.selected_options[index].key + '>=' + dates[0] + ' ';
-                        args += this.selected_options[index].key + '<=' + dates[1] + ' ';
-                    } else if (this.selected_operator[index].key == '||') {
-                        args += this.selected_options[index].key + ':';
-
-                        let multiple_values = '';
-
-                        this.selected_values[index].forEach(function (value, index) {
-                            if (index == 0) {
-                                multiple_values += value.key;
-                            } else {
-                                multiple_values += ',' + value.key;
-                            }
-                        }, this);
-
-                        args +=  multiple_values + ' ';
-                    }
-                    else {
-                        args += this.selected_options[index].key + ':' + this.selected_values[index].key + ' ';
-                    }
-
-                    search_string[path][this.selected_options[index].key] = {
-                        'key': Array.isArray(this.selected_values[index]) ? this.selected_values[index] : this.selected_values[index].key,
-                        'value': Array.isArray(this.selected_values[index]) ? this.selected_values[index] : this.selected_values[index].value,
-                        'operator': this.selected_operator[index].key,
-                    };
-                }, this);
-
-                Cookies.set('search-string', search_string, expires);
-
-                if (redirect) {
-                    window.location = path + args;
-                }
+                let args = '?search="' + this.search + '"';
+                
+                window.location = path + args;
             },
         },
 

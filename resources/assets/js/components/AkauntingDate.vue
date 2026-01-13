@@ -22,11 +22,9 @@
             @on-close="onFlatpickrClose(blur)"
             :config="dateConfig"
             class="datepicker w-full text-sm px-3 py-2.5 mt-1 rounded-lg border border-light-gray text-black placeholder-light-gray bg-white disabled:bg-gray-200 focus:outline-none focus:ring-transparent focus:border-purple"
-            :modelValue="real_model"
             :value="real_model"
             :placeholder="placeholder"
             @input="change"
-            @update:modelValue="updateModel"
             :readonly="readonly"
             :disabled="disabled">
         </flat-picker>
@@ -161,18 +159,24 @@ export default {
         }
 
         this.$emit('interface', this.real_model);
+
+        // Ensure flatpickr instance is properly initialized
+        this.$nextTick(() => {
+            if (this.$refs.flatpickr && this.$refs.flatpickr.fp) {
+                // Flatpickr instance is available and ready
+            }
+        });
     },
 
     methods: {
-        change() {
+        change(value) {
+            // Handle both direct value and event object
+            const newValue = value && value.target ? value.target.value : value;
+            this.real_model = newValue;
+            
             this.$emit('interface', this.real_model);
-
             this.$emit('change', this.real_model);
-        },
-
-        updateModel(value) {
-            this.real_model = value;
-            this.change();
+            this.$emit('input', this.real_model); // For v-model support
         },
 
         onFlatpickrOpen(focusCallback) {
@@ -215,11 +219,40 @@ export default {
 
             return prospectedDueDate;
         },
+
+        // Provide access to flatpickr instance for external components
+        getFlatpickrInstance() {
+            return this.$refs.flatpickr ? this.$refs.flatpickr.fp : null;
+        },
+
+        // Method to open the date picker programmatically
+        open() {
+            const fp = this.getFlatpickrInstance();
+            if (fp && typeof fp.open === 'function') {
+                fp.open();
+            }
+        },
+
+        // Method to close the date picker programmatically
+        close() {
+            const fp = this.getFlatpickrInstance();
+            if (fp && typeof fp.close === 'function') {
+                fp.close();
+            }
+        },
     },
 
     watch: {
         value: function(val) {
-            this.real_model = val;
+            if (val !== this.real_model) {
+                this.real_model = val;
+            }
+        },
+
+        model: function(val) {
+            if (val !== this.real_model) {
+                this.real_model = val;
+            }
         },
 
         dateConfig: function() {
