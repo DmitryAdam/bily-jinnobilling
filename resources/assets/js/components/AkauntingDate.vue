@@ -22,7 +22,8 @@
             @on-close="onFlatpickrClose(blur)"
             :config="flatpickrConfig"
             class="datepicker w-full text-sm px-3 py-2.5 mt-1 rounded-lg border border-light-gray text-black placeholder-light-gray bg-white disabled:bg-gray-200 focus:outline-none focus:ring-transparent focus:border-purple"
-            v-model="real_model"
+            :modelValue="real_model"
+            @update:modelValue="onModelValueUpdate"
             :placeholder="placeholder"
             @on-change="change"
             :readonly="readonly"
@@ -175,6 +176,10 @@ export default {
     },
 
     methods: {
+        onModelValueUpdate(value) {
+            this.real_model = value;
+        },
+
         change(selectedDates, dateStr) {
             // vue-flatpickr-component v5 passes (selectedDates, dateStr, instance)
             this.$emit('interface', dateStr);
