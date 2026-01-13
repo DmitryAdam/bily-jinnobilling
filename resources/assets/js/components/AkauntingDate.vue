@@ -16,14 +16,17 @@
         @focus="focus"
         >
         <flat-picker slot-scope="{focus, blur}"
+            ref="flatpickr"
             :name="dataName"
-            @on-open="focus"
-            @on-close="blur"
+            @on-open="onFlatpickrOpen(focus)"
+            @on-close="onFlatpickrClose(blur)"
             :config="dateConfig"
             class="datepicker w-full text-sm px-3 py-2.5 mt-1 rounded-lg border border-light-gray text-black placeholder-light-gray bg-white disabled:bg-gray-200 focus:outline-none focus:ring-transparent focus:border-purple"
-            v-model="real_model"
+            :modelValue="real_model"
+            :value="real_model"
             :placeholder="placeholder"
             @input="change"
+            @update:modelValue="updateModel"
             :readonly="readonly"
             :disabled="disabled">
         </flat-picker>
@@ -165,6 +168,24 @@ export default {
             this.$emit('interface', this.real_model);
 
             this.$emit('change', this.real_model);
+        },
+
+        updateModel(value) {
+            this.real_model = value;
+            this.change();
+        },
+
+        onFlatpickrOpen(focusCallback) {
+            if (typeof focusCallback === 'function') {
+                focusCallback();
+            }
+            this.focus();
+        },
+
+        onFlatpickrClose(blurCallback) {
+            if (typeof blurCallback === 'function') {
+                blurCallback();
+            }
         },
 
         focus() {
