@@ -16,16 +16,14 @@
         @focus="focus"
         >
         <flat-picker slot-scope="{focus, blur}"
-            ref="flatpickr"
             :name="dataName"
-            @on-open="onFlatpickrOpen(focus)"
-            @on-close="onFlatpickrClose(blur)"
-            :config="flatpickrConfig"
+            @on-open="focus"
+            @on-close="blur"
+            :config="dateConfig"
             class="datepicker w-full text-sm px-3 py-2.5 mt-1 rounded-lg border border-light-gray text-black placeholder-light-gray bg-white disabled:bg-gray-200 focus:outline-none focus:ring-transparent focus:border-purple"
-            :modelValue="real_model"
-            @update:modelValue="onModelValueUpdate"
+            v-model="real_model"
             :placeholder="placeholder"
-            @on-change="change"
+            @input="change"
             :readonly="readonly"
             :disabled="disabled">
         </flat-picker>
@@ -104,7 +102,13 @@ export default {
         dateConfig: {
             type: Object,
             default: function () {
-                return {};
+                return {
+                    allowInput: true,
+                    altFormat: "d M Y",
+                    altInput: true,
+                    dateFormat: "Y-m-d",
+                    wrap: true,
+                };
             },
             description: "FlatPckr date configuration"
         },
@@ -134,18 +138,6 @@ export default {
         }
     },
 
-    computed: {
-        flatpickrConfig() {
-            return {
-                allowInput: true,
-                altFormat: "d M Y",
-                altInput: true,
-                dateFormat: "Y-m-d",
-                ...this.dateConfig
-            };
-        }
-    },
-
     created() {
         if (this.locale !== 'en') {
             try {
@@ -166,38 +158,13 @@ export default {
         }
 
         this.$emit('interface', this.real_model);
-
-        // Ensure flatpickr instance is properly initialized
-        this.$nextTick(() => {
-            if (this.$refs.flatpickr && this.$refs.flatpickr.fp) {
-                // Flatpickr instance is available and ready
-            }
-        });
     },
 
     methods: {
-        onModelValueUpdate(value) {
-            this.real_model = value;
-        },
+        change() {
+            this.$emit('interface', this.real_model);
 
-        change(selectedDates, dateStr) {
-            // vue-flatpickr-component v5 passes (selectedDates, dateStr, instance)
-            this.$emit('interface', dateStr);
-            this.$emit('change', dateStr);
-            this.$emit('input', dateStr);
-        },
-
-        onFlatpickrOpen(focusCallback) {
-            if (typeof focusCallback === 'function') {
-                focusCallback();
-            }
-            this.focus();
-        },
-
-        onFlatpickrClose(blurCallback) {
-            if (typeof blurCallback === 'function') {
-                blurCallback();
-            }
+            this.$emit('change', this.real_model);
         },
 
         focus() {
@@ -227,40 +194,11 @@ export default {
 
             return prospectedDueDate;
         },
-
-        // Provide access to flatpickr instance for external components
-        getFlatpickrInstance() {
-            return this.$refs.flatpickr ? this.$refs.flatpickr.fp : null;
-        },
-
-        // Method to open the date picker programmatically
-        open() {
-            const fp = this.getFlatpickrInstance();
-            if (fp && typeof fp.open === 'function') {
-                fp.open();
-            }
-        },
-
-        // Method to close the date picker programmatically
-        close() {
-            const fp = this.getFlatpickrInstance();
-            if (fp && typeof fp.close === 'function') {
-                fp.close();
-            }
-        },
     },
 
     watch: {
         value: function(val) {
-            if (val !== this.real_model) {
-                this.real_model = val;
-            }
-        },
-
-        model: function(val) {
-            if (val !== this.real_model) {
-                this.real_model = val;
-            }
+            this.real_model = val;
         },
 
         dateConfig: function() {
