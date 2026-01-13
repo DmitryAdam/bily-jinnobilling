@@ -20,11 +20,11 @@
             :name="dataName"
             @on-open="onFlatpickrOpen(focus)"
             @on-close="onFlatpickrClose(blur)"
-            :config="dateConfig"
+            :config="flatpickrConfig"
             class="datepicker w-full text-sm px-3 py-2.5 mt-1 rounded-lg border border-light-gray text-black placeholder-light-gray bg-white disabled:bg-gray-200 focus:outline-none focus:ring-transparent focus:border-purple"
-            :value="real_model"
+            v-model="real_model"
             :placeholder="placeholder"
-            @input="change"
+            @on-change="change"
             :readonly="readonly"
             :disabled="disabled">
         </flat-picker>
@@ -103,13 +103,7 @@ export default {
         dateConfig: {
             type: Object,
             default: function () {
-                return {
-                    allowInput: true,
-                    altFormat: "d M Y",
-                    altInput: true,
-                    dateFormat: "Y-m-d",
-                    wrap: true,
-                };
+                return {};
             },
             description: "FlatPckr date configuration"
         },
@@ -136,6 +130,18 @@ export default {
     data() {
         return {
             real_model: '',
+        }
+    },
+
+    computed: {
+        flatpickrConfig() {
+            return {
+                allowInput: true,
+                altFormat: "d M Y",
+                altInput: true,
+                dateFormat: "Y-m-d",
+                ...this.dateConfig
+            };
         }
     },
 
@@ -169,14 +175,11 @@ export default {
     },
 
     methods: {
-        change(value) {
-            // Handle both direct value and event object
-            const newValue = value && value.target ? value.target.value : value;
-            this.real_model = newValue;
-            
-            this.$emit('interface', this.real_model);
-            this.$emit('change', this.real_model);
-            this.$emit('input', this.real_model); // For v-model support
+        change(selectedDates, dateStr) {
+            // vue-flatpickr-component v5 passes (selectedDates, dateStr, instance)
+            this.$emit('interface', dateStr);
+            this.$emit('change', dateStr);
+            this.$emit('input', dateStr);
         },
 
         onFlatpickrOpen(focusCallback) {
