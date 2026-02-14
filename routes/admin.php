@@ -162,6 +162,10 @@ Route::group(['prefix' => 'banking'], function () {
     Route::get('transfers/export', 'Banking\Transfers@export')->name('transfers.export');
     Route::resource('transfers', 'Banking\Transfers', ['middleware' => ['date.format', 'money', 'dropzone']]);
 
+    Route::post('loans/{loan}/payments', 'Banking\Loans@paymentStore')->middleware(['date.format', 'money'])->name('loans.payments.store');
+    Route::delete('loans/{loan}/payments/{payment}', 'Banking\Loans@paymentDestroy')->name('loans.payments.destroy');
+    Route::resource('loans', 'Banking\Loans', ['middleware' => ['date.format', 'money']]);
+
     Route::post('reconciliations/calculate', 'Banking\Reconciliations@calculate')->middleware(['money']);
     Route::patch('reconciliations/calculate', 'Banking\Reconciliations@calculate')->middleware(['money']);
     Route::resource('reconciliations', 'Banking\Reconciliations', ['middleware' => ['date.format', 'money', 'dropzone']]);
