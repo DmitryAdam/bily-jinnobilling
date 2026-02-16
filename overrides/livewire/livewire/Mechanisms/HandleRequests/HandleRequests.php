@@ -14,9 +14,9 @@ class HandleRequests extends Mechanism
 
     function boot()
     {
-        app($this::class)->setUpdateRoute(function ($handle) {
-            return Route::post('/livewire/update', $handle)->middleware('web');
-        });
+        // Default route registration removed to avoid duplicate 'livewire.update' name conflict
+        // with the custom route defined in routes/common.php (prefixed with {company_id}).
+        // Livewire::setUpdateRoute() in common.php handles this instead.
 
         $this->skipRequestPayloadTamperingMiddleware();
     }
