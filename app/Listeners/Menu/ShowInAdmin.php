@@ -38,8 +38,13 @@ class ShowInAdmin
 
         // Sales
         $title = trim(trans_choice('general.sales', 2));
-        if ($this->canAccessMenuItem($title, ['read-sales-invoices', 'read-sales-customers'])) {
+        if ($this->canAccessMenuItem($title, ['read-sales-invoices', 'read-sales-customers', 'read-sales-quotations'])) {
             $menu->dropdown($title, function ($sub) use ($attr) {
+                $title = trim(trans_choice('general.quotations', 2));
+                if ($this->canAccessMenuItem($title, 'read-sales-quotations')) {
+                    $sub->route('quotations.index', $title, [], 5, $attr);
+                }
+
                 $title = trim(trans_choice('general.invoices', 2));
                 if ($this->canAccessMenuItem($title, 'read-sales-invoices')) {
                     $sub->route('invoices.index', $title, [], 10, $attr);

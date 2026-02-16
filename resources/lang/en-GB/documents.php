@@ -40,6 +40,8 @@ return [
         'invoiced'              => 'Invoiced',
         'overdue'               => 'Overdue',
         'unpaid'                => 'Unpaid',
+        'accepted'              => 'Accepted',
+        'rejected'              => 'Rejected',
         'cancelled'             => 'Cancelled',
         'voided'                => 'Voided',
         'completed'             => 'Completed',

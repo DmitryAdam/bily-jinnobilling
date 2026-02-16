@@ -89,6 +89,15 @@ trait Documents
                 'unpaid',
                 'cancelled',
             ],
+            'quotation' => [
+                'draft',
+                'sent',
+                'viewed',
+                'accepted',
+                'rejected',
+                'expired',
+                'cancelled',
+            ],
         ];
 
         // @todo get dynamic path

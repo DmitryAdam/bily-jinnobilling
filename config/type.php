@@ -263,6 +263,58 @@ return [
             ],
         ],
 
+        Document::QUOTATION_TYPE => [
+            'alias'                     => '',
+            'group'                     => 'sales',
+            'route' => [
+                'prefix'                => 'quotations',
+                'parameter'             => 'quotation',
+                'document'              => 'quotations.index',
+                'params' => [
+                    'draft'             => ['search' => 'status:draft'],
+                    'sent'              => ['search' => 'status:sent'],
+                    'accepted'          => ['search' => 'status:accepted'],
+                    'all'               => ['list_records' => 'all'],
+                ],
+            ],
+            'permission' => [
+                'prefix'                => 'quotations',
+            ],
+            'translation' => [
+                'prefix'                        => 'quotations',
+                'add_contact'                   => 'general.customers',
+                'issued_at'                     => 'quotations.quotation_date',
+                'due_at'                        => 'quotations.expiry_date',
+                'section_billing_description'   => 'quotations.form_description.billing',
+            ],
+            'setting' => [
+                'prefix'                => 'quotation',
+            ],
+            'category_type'             => 'income',
+            'transaction_type'          => null,
+            'contact_type'              => 'customer',
+            'hide'                      => [],
+            'class'                     => [],
+            'notification' => [
+                'class'                 => 'App\Notifications\Sale\Quotation',
+                'notify_contact'        => true,
+                'notify_user'           => true,
+            ],
+            'script' => [
+                'folder'                => 'common',
+                'file'                  => 'documents',
+            ],
+            'status_workflow' => [
+                'draft'                 => 'send',
+                'sent'                  => 'mark-accepted',
+                'viewed'                => 'mark-accepted',
+                'accepted'              => 'convert-to-invoice',
+                'rejected'              => 'restore',
+                'expired'               => 'restore',
+                'cancelled'             => 'restore',
+            ],
+        ],
+
         Document::BILL_RECURRING_TYPE => [
             'alias'                     => '',
             'group'                     => 'purchases',

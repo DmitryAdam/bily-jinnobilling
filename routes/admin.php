@@ -88,6 +88,22 @@ Route::group(['prefix' => 'sales'], function () {
     Route::get('recurring-invoices/export', 'Sales\RecurringInvoices@export')->name('recurring-invoices.export');
     Route::resource('recurring-invoices', 'Sales\RecurringInvoices', ['middleware' => ['date.format', 'money', 'dropzone']]);
 
+    Route::get('quotations/{quotation}/sent', 'Sales\Quotations@markSent')->name('quotations.sent');
+    Route::get('quotations/{quotation}/accepted', 'Sales\Quotations@markAccepted')->name('quotations.accepted');
+    Route::get('quotations/{quotation}/rejected', 'Sales\Quotations@markRejected')->name('quotations.rejected');
+    Route::get('quotations/{quotation}/cancelled', 'Sales\Quotations@markCancelled')->name('quotations.cancelled');
+    Route::get('quotations/{quotation}/restore', 'Sales\Quotations@restoreQuotation')->name('quotations.restore');
+    Route::get('quotations/{quotation}/revise', 'Sales\Quotations@reviseForm')->name('quotations.revise');
+    Route::post('quotations/{quotation}/revise', 'Sales\Quotations@revise')->name('quotations.revise.store');
+    Route::get('quotations/{quotation}/convert-to-invoice', 'Sales\Quotations@convertToInvoice')->name('quotations.convert-to-invoice');
+    Route::get('quotations/{quotation}/email', 'Sales\Quotations@emailQuotation')->name('quotations.email');
+    Route::get('quotations/{quotation}/print', 'Sales\Quotations@printQuotation')->name('quotations.print');
+    Route::get('quotations/{quotation}/pdf', 'Sales\Quotations@pdfQuotation')->name('quotations.pdf');
+    Route::get('quotations/{quotation}/duplicate', 'Sales\Quotations@duplicate')->name('quotations.duplicate');
+    Route::get('quotations/generate-number', 'Sales\Quotations@generateNumber')->name('quotations.generate-number');
+    Route::get('quotations/export', 'Sales\Quotations@export')->name('quotations.export');
+    Route::resource('quotations', 'Sales\Quotations', ['middleware' => ['date.format', 'money', 'dropzone']]);
+
     Route::get('customers/{customer}/create-invoice', 'Sales\Customers@createInvoice')->name('customers.create-invoice');
     Route::get('customers/{customer}/create-income', 'Sales\Customers@createIncome')->name('customers.create-income');
     Route::get('customers/{customer}/enable', 'Sales\Customers@enable')->name('customers.enable');

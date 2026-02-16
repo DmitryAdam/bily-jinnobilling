@@ -27,6 +27,7 @@ class Document extends Model
     public const INVOICE_RECURRING_TYPE = 'invoice-recurring';
     public const BILL_TYPE = 'bill';
     public const BILL_RECURRING_TYPE = 'bill-recurring';
+    public const QUOTATION_TYPE = 'quotation';
 
     protected $table = 'documents';
 
@@ -63,6 +64,8 @@ class Document extends Model
         'template',
         'color',
         'parent_id',
+        'version',
+        'revision_notes',
         'created_from',
         'created_by',
     ];
@@ -77,6 +80,7 @@ class Document extends Model
         'due_at'        => 'datetime',
         'amount'        => 'double',
         'currency_rate' => 'double',
+        'version'       => 'integer',
         'deleted_at'    => 'datetime',
     ];
 
@@ -252,6 +256,18 @@ class Document extends Model
                     ->whereHas('recurring', function (Builder $query) {
                         $query->whereNull('deleted_at');
                     });
+    }
+
+    public function scopeQuotation(Builder $query): Builder
+    {
+        return $query->where($this->qualifyColumn('type'), '=', self::QUOTATION_TYPE);
+    }
+
+    public function quotationVersions()
+    {
+        return $this->hasMany(self::class, 'parent_id')
+            ->where('type', self::QUOTATION_TYPE)
+            ->orderBy('version', 'asc');
     }
 
     /**
@@ -470,10 +486,13 @@ class Document extends Model
     {
         return match($this->status) {
             'paid'      => 'status-success',
+            'accepted'  => 'status-success',
             'partial'   => 'status-partial',
             'sent'      => 'status-danger',
             'received'  => 'status-danger',
             'viewed'    => 'status-sent',
+            'rejected'  => 'status-danger',
+            'expired'   => 'status-canceled',
             'cancelled' => 'status-canceled',
             default     => 'status-draft',
         };
@@ -517,7 +536,15 @@ class Document extends Model
 
     public function getTemplatePathAttribute($value = null)
     {
-        return $value ?: 'sales.invoices.print_' . setting('invoice.template');
+        if ($value) {
+            return $value;
+        }
+
+        if ($this->type === self::QUOTATION_TYPE) {
+            return 'sales.quotations.print_' . setting('quotation.template', 'default');
+        }
+
+        return 'sales.invoices.print_' . setting('invoice.template');
     }
 
     public function getContactLocationAttribute()
@@ -588,7 +615,8 @@ class Document extends Model
         } catch (\Exception $e) {}
 
         if (
-            $this->status != 'paid'
+            $this->type !== self::QUOTATION_TYPE
+            && $this->status != 'paid'
             && ! str_contains($this->type, 'recurring')
             && (empty($this->transactions->count())
             || (! empty($this->transactions->count()) && $this->paid != $this->amount))
@@ -667,7 +695,7 @@ class Document extends Model
                 } catch (\Exception $e) {}
 
                 try {
-                    if (! empty($this->contact) && $this->contact->has_email && ($this->type == 'invoice')) {
+                    if (! empty($this->contact) && $this->contact->has_email && in_array($this->type, ['invoice', 'quotation'])) {
                         $actions[] = [
                             'type' => 'button',
                             'title' => trans('invoices.send_mail'),
@@ -755,6 +783,10 @@ class Document extends Model
 
         if (request()->route()->hasParameter('recurring_bill')) {
             $query->billRecurring();
+        }
+
+        if (request()->route()->hasParameter('quotation')) {
+            $query->quotation();
         }
 
         return $query->firstOrFail();

@@ -87,6 +87,12 @@ class Event extends Provider
             'App\Listeners\Document\MarkDocumentViewed',
             'App\Listeners\Document\SendDocumentViewNotification',
         ],
+        'App\Events\Document\QuotationAccepted' => [
+            'App\Listeners\Document\MarkQuotationAccepted',
+        ],
+        'App\Events\Document\QuotationRejected' => [
+            'App\Listeners\Document\MarkQuotationRejected',
+        ],
         'App\Events\Install\UpdateFailed' => [
             'App\Listeners\Update\SendNotificationOnFailure',
         ],
