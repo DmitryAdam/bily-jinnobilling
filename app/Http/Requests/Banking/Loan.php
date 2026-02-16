@@ -3,9 +3,21 @@
 namespace App\Http\Requests\Banking;
 
 use App\Abstracts\Http\FormRequest;
+use App\Utilities\Date;
 
 class Loan extends FormRequest
 {
+    protected function prepareForValidation()
+    {
+        parent::prepareForValidation();
+
+        if ($this->has('issued_at')) {
+            $this->merge([
+                'issued_at' => Date::parse($this->get('issued_at'))->format('Y-m-d'),
+            ]);
+        }
+    }
+
     public function rules()
     {
         return [

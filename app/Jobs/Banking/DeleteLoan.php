@@ -10,16 +10,15 @@ class DeleteLoan extends Job implements ShouldDelete
 {
     public function handle(): bool
     {
-        \DB::transaction(function () {
-            // Delete all payment transactions first
-            foreach ($this->model->payments as $payment) {
-                if ($payment->transaction) {
-                    $this->dispatch(new DeleteTransaction($payment->transaction));
-                }
-                $payment->delete();
-            }
+        // Prevent deletion if loan has payments
+        if ($this->model->payments()->count() > 0) {
+            $message = trans('loans.messages.has_payments');
 
-            // Delete the loan's expense transaction
+            throw new \Exception($message);
+        }
+
+        \DB::transaction(function () {
+            // Delete the loan's expense transaction (money returns to account)
             if ($this->model->transaction) {
                 $this->dispatch(new DeleteTransaction($this->model->transaction));
             }

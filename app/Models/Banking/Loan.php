@@ -10,6 +10,7 @@ class Loan extends Model
 
     protected $fillable = [
         'company_id',
+        'loan_number',
         'account_id',
         'transaction_id',
         'amount',
@@ -36,11 +37,30 @@ class Loan extends Model
     ];
 
     public $sortable = [
+        'loan_number',
         'issued_at',
         'contact_name',
         'amount',
         'status',
     ];
+
+    public static function getNextLoanNumber($company_id = null): string
+    {
+        $company_id = $company_id ?: company_id();
+
+        $last = \DB::table('loans')
+            ->where('company_id', $company_id)
+            ->orderBy('loan_number', 'desc')
+            ->value('loan_number');
+
+        if ($last) {
+            $number = (int) str_replace('LOAN-', '', $last) + 1;
+        } else {
+            $number = 1;
+        }
+
+        return 'LOAN-' . str_pad($number, 5, '0', STR_PAD_LEFT);
+    }
 
     public function account()
     {

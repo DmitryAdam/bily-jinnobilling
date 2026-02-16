@@ -29,6 +29,12 @@ class CreateLoanPayment extends Job implements HasOwner, HasSource, ShouldCreate
             $currency_code = $account->currency_code;
             $currency_rate = currency($currency_code)->getRate();
 
+            $description = "Bayar Piutang {$loan->loan_number} - {$loan->contact_name}";
+            $user_description = $this->request->get('description');
+            if ($user_description) {
+                $description .= " | {$user_description}";
+            }
+
             $income_transaction = $this->dispatch(new CreateTransaction([
                 'company_id' => $this->request['company_id'],
                 'type' => Transaction::INCOME_TYPE,
@@ -39,8 +45,8 @@ class CreateLoanPayment extends Job implements HasOwner, HasSource, ShouldCreate
                 'currency_rate' => $currency_rate,
                 'amount' => $this->request->get('amount'),
                 'contact_id' => 0,
-                'description' => $this->request->get('description', ''),
-                'category_id' => $this->getTransferCategoryId(),
+                'description' => $description,
+                'category_id' => $this->getLoanIncomeCategoryId(),
                 'payment_method' => $this->request->get('payment_method'),
                 'reference' => $this->request->get('reference'),
                 'created_from' => $this->request->get('created_from'),
@@ -63,8 +69,9 @@ class CreateLoanPayment extends Job implements HasOwner, HasSource, ShouldCreate
                 'created_by' => $this->request->get('created_by'),
             ]);
 
-            // Update loan status
-            $paid_total = $loan->payments->sum('amount') + $this->request->get('amount');
+            // Update loan status - refresh payments to include the newly created one
+            $loan->load('payments');
+            $paid_total = $loan->payments->sum('amount');
 
             if ($paid_total >= $loan->amount) {
                 $loan->update(['status' => 'paid']);

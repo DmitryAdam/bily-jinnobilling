@@ -5,6 +5,9 @@ export default class Form {
         let form = document.getElementById(form_id);
 
         if (!form) {
+            this.errors = new Errors();
+            this.loading = false;
+            this.response = {};
             return;
         }
 

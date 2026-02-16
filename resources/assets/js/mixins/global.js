@@ -129,6 +129,8 @@ export default {
             quantity_name_input: false,
 
             tax_summary: '',
+
+            payment_modal: false,
         }
     },
 

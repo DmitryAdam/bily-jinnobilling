@@ -60,4 +60,6 @@
             }
         </script>
     @endpush
+
+    <x-script folder="banking" file="loans" />
 </x-layouts.admin>

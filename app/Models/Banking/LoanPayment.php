@@ -3,6 +3,7 @@
 namespace App\Models\Banking;
 
 use App\Abstracts\Model;
+use App\Utilities\Modules;
 
 class LoanPayment extends Model
 {
@@ -44,5 +45,12 @@ class LoanPayment extends Model
     public function account()
     {
         return $this->belongsTo('App\Models\Banking\Account');
+    }
+
+    public function getPaymentMethodNameAttribute()
+    {
+        $payment_methods = Modules::getPaymentMethods();
+
+        return $payment_methods[$this->payment_method] ?? $this->payment_method;
     }
 }

@@ -285,7 +285,7 @@ class Category extends Model
             ],
         ];
 
-        if ($this->isTransferCategory()) {
+        if ($this->isTransferCategory() || $this->isLoanCategory()) {
             return $actions;
         }
 

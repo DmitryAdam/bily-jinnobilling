@@ -26,7 +26,7 @@ class Loans extends Controller
 
     public function create()
     {
-        $accounts = Account::enabled()->orderBy('name')->get()->pluck('title', 'id');
+        $accounts = Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
 
         $currency = Currency::where('code', default_currency())->first();
 
@@ -58,7 +58,7 @@ class Loans extends Controller
     {
         $loan->load('account', 'payments.account', 'payments.transaction');
 
-        $accounts = Account::enabled()->orderBy('name')->get()->pluck('title', 'id');
+        $accounts = Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
 
         $currency = Currency::where('code', $loan->currency_code)->first();
 

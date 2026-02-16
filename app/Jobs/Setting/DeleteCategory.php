@@ -49,6 +49,13 @@ class DeleteCategory extends Job implements ShouldDelete
             throw new \Exception($message);
         }
 
+        // Can not delete loan category
+        if ($this->model->isLoanCategory()) {
+            $message = trans('messages.error.loan_category', ['type' => $this->model->name]);
+
+            throw new \Exception($message);
+        }
+
         // Can not delete the last category by type
         if (Category::where('type', $this->model->type)->count() == 1 && $this->model->parent_id === null) {
             $message = trans('messages.error.last_category', ['type' => strtolower(trans_choice('general.' . $this->model->type . 's', 1))]);

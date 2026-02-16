@@ -48,6 +48,57 @@ trait Categories
         return $id == $this->getTransferCategoryId();
     }
 
+    public function getLoanExpenseCategoryId(): mixed
+    {
+        return Cache::remember('loanExpenseCategoryId', 60, function () {
+            $id = Category::where('created_from', 'core::loan')->pluck('id')->first();
+
+            if (! $id) {
+                $category = Category::create([
+                    'company_id' => company_id(),
+                    'name' => 'Piutang',
+                    'type' => 'expense',
+                    'color' => '#d4a017',
+                    'enabled' => 1,
+                    'created_from' => 'core::loan',
+                ]);
+
+                $id = $category->id;
+            }
+
+            return $id;
+        });
+    }
+
+    public function getLoanIncomeCategoryId(): mixed
+    {
+        return Cache::remember('loanIncomeCategoryId', 60, function () {
+            $id = Category::where('created_from', 'core::loan-payment')->pluck('id')->first();
+
+            if (! $id) {
+                $category = Category::create([
+                    'company_id' => company_id(),
+                    'name' => 'Bayar Piutang',
+                    'type' => 'income',
+                    'color' => '#6da252',
+                    'enabled' => 1,
+                    'created_from' => 'core::loan-payment',
+                ]);
+
+                $id = $category->id;
+            }
+
+            return $id;
+        });
+    }
+
+    public function isLoanCategory(): bool
+    {
+        $id = $this->id ?? $this->category->id ?? $this->model->id ?? 0;
+
+        return $id == $this->getLoanExpenseCategoryId() || $id == $this->getLoanIncomeCategoryId();
+    }
+
     public function getChildrenCategoryIds($category)
     {
         $ids = [];

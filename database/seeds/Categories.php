@@ -65,12 +65,28 @@ class Categories extends Seeder
                 'color' => '#328aef',
                 'enabled' => '1',
             ],
+            [
+                'company_id' => $company_id,
+                'name' => 'Piutang',
+                'type' => 'expense',
+                'color' => '#d4a017',
+                'enabled' => '1',
+                'created_from' => 'core::loan',
+            ],
+            [
+                'company_id' => $company_id,
+                'name' => 'Bayar Piutang',
+                'type' => 'income',
+                'color' => '#6da252',
+                'enabled' => '1',
+                'created_from' => 'core::loan-payment',
+            ],
         ];
 
         $income_category_id = $expense_category_id = 0;
 
         foreach ($rows as $row) {
-            $row['created_from'] = 'core::seed';
+            $row['created_from'] = $row['created_from'] ?? 'core::seed';
 
             $category = $this->dispatch(new CreateCategory($row));
 

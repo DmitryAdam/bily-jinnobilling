@@ -2,6 +2,7 @@
 
 return [
 
+    'loan_number'       => 'Loan Number',
     'contact_name'      => 'Contact Name',
     'loan_details'      => 'Loan Details',
     'summary'           => 'Summary',
@@ -25,7 +26,8 @@ return [
     ],
 
     'messages' => [
-        'delete'    => ':contact (:amount)',
+        'delete'        => ':contact (:amount)',
+        'has_payments'  => 'Cannot delete loan that has payment records. Please delete all payments first.',
     ],
 
 ];
