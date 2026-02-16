@@ -22,6 +22,7 @@ return [
 
     'form_description' => [
         'general'   => 'Enter the loan details including who you are lending to, the account, and amount.',
+        'edit'      => 'You can edit the date, contact name, and description. Amount and account cannot be changed.',
         'other'     => 'Select the payment method and add an optional reference.',
     ],
 

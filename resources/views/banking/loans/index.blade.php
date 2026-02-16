@@ -18,6 +18,51 @@
     </x-slot>
 
     <x-slot name="content">
+        {{-- Summary Widget --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Piutang</p>
+                        <p class="text-xl font-bold text-gray-800 mt-1">
+                            <x-money :amount="$totalPiutang" :currency="$currency" />
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100">
+                        <span class="material-icons text-blue-600 text-xl">account_balance_wallet</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Terbayar</p>
+                        <p class="text-xl font-bold text-green-600 mt-1">
+                            <x-money :amount="$totalPaid" :currency="$currency" />
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-green-100">
+                        <span class="material-icons text-green-600 text-xl">check_circle</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Belum Terbayar</p>
+                        <p class="text-xl font-bold text-red-600 mt-1">
+                            <x-money :amount="$totalUnpaid" :currency="$currency" />
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-red-100">
+                        <span class="material-icons text-red-600 text-xl">pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @if ($loans->count() || request()->get('search', false))
             <x-index.container>
                 <x-index.search
@@ -90,15 +135,15 @@
                                         {{ $item->account->name }}
                                     </x-table.td>
 
-                                    <x-table.td class="w-2/12" kind="amount">
+                                    <x-table.td class="w-2/12 whitespace-nowrap" kind="amount">
                                         <x-money :amount="$item->amount" :currency="$item->currency_code" />
                                     </x-table.td>
 
-                                    <x-table.td class="w-1/12" kind="amount">
+                                    <x-table.td class="w-1/12 whitespace-nowrap" kind="amount">
                                         <x-money :amount="$item->paid_amount" :currency="$item->currency_code" />
                                     </x-table.td>
 
-                                    <x-table.td class="w-1/12" kind="amount">
+                                    <x-table.td class="w-1/12 whitespace-nowrap" kind="amount">
                                         <x-money :amount="$item->remaining_amount" :currency="$item->currency_code" />
                                     </x-table.td>
 
