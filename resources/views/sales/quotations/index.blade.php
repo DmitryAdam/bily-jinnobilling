@@ -14,11 +14,11 @@
     </x-slot>
 
     <x-slot name="moreButtons">
-        <x-documents.index.more-buttons type="quotation" />
+        <x-documents.index.more-buttons type="quotation" hide-import />
     </x-slot>
 
     <x-slot name="content">
-        <x-documents.index.content type="quotation" :documents="$quotations" :total-documents="$total_quotations" />
+        <x-documents.index.content type="quotation" :documents="$quotations" :total-documents="$total_quotations" hide-import />
     </x-slot>
 
     <x-documents.script type="quotation" />
