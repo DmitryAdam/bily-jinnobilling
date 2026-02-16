@@ -11,6 +11,10 @@
 
     RewriteEngine On
 
+    # Redirect to public/ folder if not already
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L]
+
     # Prevent Direct Access to Protected Files
     <FilesMatch "(?i)(^artisan$|\.env|\.log)">
         # Apache 2.2 syntax
