@@ -82,27 +82,27 @@
                                     <x-sortablelink column="loan_number" title="{{ trans('loans.loan_number') }}" />
                                 </x-table.th>
 
-                                <x-table.th class="w-2/12">
+                                <x-table.th class="w-[10%]">
                                     <x-sortablelink column="issued_at" title="{{ trans('general.date') }}" />
                                 </x-table.th>
 
-                                <x-table.th class="w-2/12">
+                                <x-table.th class="w-[14%]">
                                     <x-sortablelink column="contact_name" title="{{ trans('loans.contact_name') }}" />
                                 </x-table.th>
 
-                                <x-table.th class="w-2/12">
+                                <x-table.th class="w-[12%]">
                                     {{ trans_choice('general.accounts', 1) }}
                                 </x-table.th>
 
-                                <x-table.th class="w-2/12" kind="amount">
+                                <x-table.th class="w-[14%]" kind="amount">
                                     <x-sortablelink column="amount" title="{{ trans('general.amount') }}" />
                                 </x-table.th>
 
-                                <x-table.th class="w-1/12" kind="amount">
+                                <x-table.th class="w-[14%]" kind="amount">
                                     {{ trans('loans.paid') }}
                                 </x-table.th>
 
-                                <x-table.th class="w-1/12" kind="amount">
+                                <x-table.th class="w-[14%]" kind="amount">
                                     {{ trans('loans.remaining') }}
                                 </x-table.th>
 
@@ -123,27 +123,27 @@
                                         <a href="{{ route('loans.show', $item->id) }}" class="text-purple font-medium">{{ $item->loan_number }}</a>
                                     </x-table.td>
 
-                                    <x-table.td class="w-2/12">
+                                    <x-table.td class="w-[10%]">
                                         <x-date date="{{ $item->issued_at }}" />
                                     </x-table.td>
 
-                                    <x-table.td class="w-2/12">
+                                    <x-table.td class="w-[14%]">
                                         {{ $item->contact_name }}
                                     </x-table.td>
 
-                                    <x-table.td class="w-2/12">
+                                    <x-table.td class="w-[12%]">
                                         {{ $item->account->name }}
                                     </x-table.td>
 
-                                    <x-table.td class="w-2/12 whitespace-nowrap" kind="amount">
+                                    <x-table.td class="w-[14%] whitespace-nowrap" kind="amount">
                                         <x-money :amount="$item->amount" :currency="$item->currency_code" />
                                     </x-table.td>
 
-                                    <x-table.td class="w-1/12 whitespace-nowrap" kind="amount">
+                                    <x-table.td class="w-[14%] whitespace-nowrap" kind="amount">
                                         <x-money :amount="$item->paid_amount" :currency="$item->currency_code" />
                                     </x-table.td>
 
-                                    <x-table.td class="w-1/12 whitespace-nowrap" kind="amount">
+                                    <x-table.td class="w-[14%] whitespace-nowrap" kind="amount">
                                         <x-money :amount="$item->remaining_amount" :currency="$item->currency_code" />
                                     </x-table.td>
 
