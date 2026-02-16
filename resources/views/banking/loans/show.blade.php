@@ -96,36 +96,14 @@
                     </div>
                 </div>
 
-                {{-- Add Payment Form --}}
+                {{-- Add Payment Button --}}
                 @if ($loan->status != 'paid')
                     @can('create-banking-loans')
                         <div class="bg-white rounded-xl border border-gray-200 p-6">
-                            <h3 class="text-lg font-semibold mb-4 border-b pb-2">{{ trans('loans.add_payment') }}</h3>
-
-                            <x-form id="loan" action="{{ route('loans.payments.store', $loan->id) }}">
-                                <div class="space-y-4">
-                                    <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" :selected="$loan->account_id" />
-
-                                    <x-form.group.money name="amount" label="{{ trans('general.amount') }}" value="0" :currency="$currency" dynamicCurrency="currency" />
-
-                                    <x-form.group.date name="paid_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ Date::now()->toDateString() }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" />
-
-                                    <x-form.group.payment-method />
-
-                                    <x-form.group.text name="description" label="{{ trans('general.description') }}" not-required />
-
-                                    <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required />
-                                </div>
-
-                                <x-form.input.hidden name="loan_id" :value="$loan->id" />
-
-                                <div class="mt-4 pt-4 border-t">
-                                    <button type="submit" class="w-full flex items-center justify-center bg-green hover:bg-green-700 text-white px-6 py-2.5 text-base rounded-lg disabled:bg-green-100">
-                                        <span class="material-icons text-base mr-2">add</span>
-                                        {{ trans('loans.add_payment') }}
-                                    </button>
-                                </div>
-                            </x-form>
+                            <button type="button" class="w-full flex items-center justify-center bg-green hover:bg-green-700 text-white px-6 py-2.5 text-base rounded-lg" @click="payment_modal = true">
+                                <span class="material-icons text-base mr-2">add</span>
+                                {{ trans('loans.add_payment') }}
+                            </button>
                         </div>
                     @endcan
                 @endif
@@ -183,6 +161,56 @@
         </div>
 
     </x-slot>
+
+    @if ($loan->status != 'paid')
+        @can('create-banking-loans')
+            @push('content_content_end')
+                <akaunting-modal
+                    modal-dialog-class="max-w-screen-md"
+                    :show="payment_modal"
+                    @cancel="payment_modal = false"
+                    :title="'{{ trans('loans.add_payment') }}'">
+                    <template #modal-body>
+                        <x-form id="loan-payment" action="{{ route('loans.payments.store', $loan->id) }}">
+                            <div class="p-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                                    <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" placeholder="{{ trans('general.form.select.field', ['field' => trans_choice('general.accounts', 1)]) }}" />
+
+                                    <x-form.group.money name="amount" label="{{ trans('general.amount') }}" value="0" :currency="$currency" dynamicCurrency="currency" />
+
+                                    <x-form.group.date name="paid_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ Date::now()->toDateString() }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" />
+
+                                    <x-form.group.payment-method />
+
+                                    <x-form.group.text name="description" label="{{ trans('general.description') }}" not-required />
+
+                                    <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required />
+                                </div>
+                            </div>
+
+                            <x-form.input.hidden name="loan_id" :value="$loan->id" />
+
+                            <div class="flex items-center justify-end p-4 border-t">
+                                <button type="button" class="px-6 py-1.5 hover:bg-gray-200 rounded-lg ltr:mr-2 rtl:ml-2" @click="payment_modal = false">
+                                    {{ trans('general.cancel') }}
+                                </button>
+
+                                <button type="submit" class="relative flex items-center justify-center bg-green hover:bg-green-700 text-white px-6 py-1.5 text-base rounded-lg disabled:bg-green-100">
+                                    <x-button.loading>
+                                        {{ trans('loans.add_payment') }}
+                                    </x-button.loading>
+                                </button>
+                            </div>
+                        </x-form>
+                    </template>
+
+                    <template #card-footer>
+                        <span></span>
+                    </template>
+                </akaunting-modal>
+            @endpush
+        @endcan
+    @endif
 
     @push('scripts_start')
         <script type="text/javascript">
