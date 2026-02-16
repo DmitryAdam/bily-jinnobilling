@@ -114,6 +114,16 @@ class Loan extends Model
         ];
 
         $actions[] = [
+            'title' => trans('general.edit'),
+            'icon' => 'edit',
+            'url' => route('loans.edit', $this->id),
+            'permission' => 'update-banking-loans',
+            'attributes' => [
+                'id' => 'index-line-actions-edit-loan-' . $this->id,
+            ],
+        ];
+
+        $actions[] = [
             'type' => 'delete',
             'icon' => 'delete',
             'route' => 'loans.destroy',

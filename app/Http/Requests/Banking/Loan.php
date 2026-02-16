@@ -20,6 +20,15 @@ class Loan extends FormRequest
 
     public function rules()
     {
+        // On update (PUT/PATCH), only validate editable fields
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            return [
+                'issued_at' => 'required|date_format:Y-m-d',
+                'contact_name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+            ];
+        }
+
         return [
             'account_id' => 'required|integer',
             'amount' => 'required|amount',

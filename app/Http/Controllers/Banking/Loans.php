@@ -21,7 +21,14 @@ class Loans extends Controller
     {
         $loans = Loan::with('account', 'payments')->collect(['issued_at' => 'desc']);
 
-        return $this->response('banking.loans.index', compact('loans'));
+        $allLoans = Loan::with('payments')->where('company_id', company_id())->get();
+        $totalPiutang = $allLoans->sum('amount');
+        $totalPaid = $allLoans->sum(fn($l) => $l->paid_amount);
+        $totalUnpaid = $totalPiutang - $totalPaid;
+
+        $currency = default_currency();
+
+        return $this->response('banking.loans.index', compact('loans', 'totalPiutang', 'totalPaid', 'totalUnpaid', 'currency'));
     }
 
     public function create()
@@ -63,6 +70,38 @@ class Loans extends Controller
         $currency = Currency::where('code', $loan->currency_code)->first();
 
         return view('banking.loans.show', compact('loan', 'accounts', 'currency'));
+    }
+
+    public function edit(Loan $loan)
+    {
+        $loan->load('account');
+
+        $accounts = Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
+
+        $currency = Currency::where('code', $loan->currency_code)->first();
+
+        return view('banking.loans.edit', compact('loan', 'accounts', 'currency'));
+    }
+
+    public function update(Request $request, Loan $loan)
+    {
+        $response = $this->ajaxDispatch(new UpdateLoan($loan, $request));
+
+        if ($response['success']) {
+            $response['redirect'] = route('loans.show', $loan->id);
+
+            $message = trans('messages.success.updated', ['type' => trans_choice('general.loans', 1)]);
+
+            flash($message)->success();
+        } else {
+            $response['redirect'] = route('loans.edit', $loan->id);
+
+            $message = $response['message'];
+
+            flash($message)->error()->important();
+        }
+
+        return response()->json($response);
     }
 
     public function destroy(Loan $loan)
