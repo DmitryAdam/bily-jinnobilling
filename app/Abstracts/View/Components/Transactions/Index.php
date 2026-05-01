@@ -500,7 +500,7 @@ abstract class Index extends Component
             return $class;
         }
 
-        return 'w-4/12 sm:w-3/12';
+        return 'w-3/12 sm:w-2/12';
     }
 
     protected function getTextPaidAt($type, $textPaidAt)
@@ -590,7 +590,7 @@ abstract class Index extends Component
             return $class;
         }
 
-        return 'w-2/12';
+        return 'w-3/12';
     }
 
     protected function getTextType($type, $textType)
