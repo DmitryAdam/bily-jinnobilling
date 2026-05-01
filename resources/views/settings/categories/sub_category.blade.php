@@ -46,7 +46,14 @@
 
         <x-table.td class="w-3/12 py-4 whitespace-nowrap text-sm font-normal text-black cursor-pointer" kind="amount">
             @if (! $sub_category->sub_categories->count())
-                {{ $sub_category->transactions_count }}
+                <a
+                    href="{{ route('transactions.index', ['search' => 'category_id:' . $sub_category->id]) }}"
+                    target="_blank"
+                    onclick="event.stopPropagation();"
+                    class="hover:underline"
+                >
+                    {{ $sub_category->transactions_count }}
+                </a>
             @endif
         </x-table.td>
 
