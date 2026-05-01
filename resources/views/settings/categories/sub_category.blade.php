@@ -45,7 +45,9 @@
         </x-table.td>
 
         <x-table.td class="w-3/12 py-4 whitespace-nowrap text-sm font-normal text-black cursor-pointer" kind="amount">
-            {{ $sub_category->transactions_count }}
+            @if (! $sub_category->sub_categories->count())
+                {{ $sub_category->transactions_count }}
+            @endif
         </x-table.td>
 
         <x-table.td kind="action">

@@ -116,7 +116,9 @@
                             </x-table.td>
 
                             <x-table.td class="w-3/12" kind="amount">
-                                {{ $item->transactions_count }}
+                                @if (! $item->sub_categories->count())
+                                    {{ $item->transactions_count }}
+                                @endif
                             </x-table.td>
 
                             <x-table.td kind="action">
