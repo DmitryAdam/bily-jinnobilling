@@ -99,7 +99,7 @@ class Category extends Model
 
     public function sub_categories()
     {
-        return $this->hasMany(Category::class, 'parent_id')->withSubCategory()->with('categories')->orderBy('name');
+        return $this->hasMany(Category::class, 'parent_id')->withSubCategory()->with('categories')->withCount('transactions')->orderBy('name');
     }
 
     public function documents()

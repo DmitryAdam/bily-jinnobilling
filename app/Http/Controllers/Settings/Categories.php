@@ -24,7 +24,7 @@ class Categories extends Controller
      */
     public function index()
     {
-        $query = Category::with('sub_categories');
+        $query = Category::with('sub_categories')->withCount('transactions');
 
         if (request()->has('search')) {
             $query->withSubcategory();

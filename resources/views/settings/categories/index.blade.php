@@ -49,12 +49,16 @@
                             <x-index.bulkaction.all />
                         </x-table.th>
 
-                        <x-table.th class="w-6/12">
+                        <x-table.th class="w-5/12">
                             <x-sortablelink column="name" title="{{ trans('general.name') }}" />
                         </x-table.th>
 
-                        <x-table.th class="w-6/12">
+                        <x-table.th class="w-4/12">
                             <x-sortablelink column="type" title="{{ trans_choice('general.types', 1) }}" />
+                        </x-table.th>
+
+                        <x-table.th class="w-3/12" kind="amount">
+                            {{ trans_choice('general.transactions', 2) }}
                         </x-table.th>
                     </x-table.tr>
                 </x-table.thead>
@@ -70,7 +74,7 @@
                                 />
                             </x-table.td>
 
-                            <x-table.td class="w-6/12">
+                            <x-table.td class="w-5/12">
                                 <div class="flex items-center">
                                     @if ($item->sub_categories->count())
                                         <x-tooltip id="tooltip-category-{{ $item->id }}" placement="bottom" message="{{ trans('categories.collapse') }}">
@@ -80,7 +84,7 @@
                                                 node="child-{{ $item->id }}"
                                                 onClick="toggleSub('child-{{ $item->id }}', event)"
                                             >
-                                                <span class="material-icons transform rotate-90 -ml-2 transition-all text-xl leading-none align-middle rounded-full bg-{{ $item->color }} text-white" style="background-color:{{ $item->color }};">chevron_right</span>
+                                                <span class="material-icons transform -ml-2 transition-all text-xl leading-none align-middle rounded-full bg-{{ $item->color }} text-white" style="background-color:{{ $item->color }};">chevron_right</span>
                                             </button>
                                         </x-tooltip>
         
@@ -103,12 +107,16 @@
                                 @endif
                             </x-table.td>
 
-                            <x-table.td class="w-6/12">
+                            <x-table.td class="w-4/12">
                                 @if (! empty($types[$item->type]))
                                     {{ $types[$item->type] }}
                                 @else
                                     <x-empty-data />
                                 @endif
+                            </x-table.td>
+
+                            <x-table.td class="w-3/12" kind="amount">
+                                {{ $item->transactions_count }}
                             </x-table.td>
 
                             <x-table.td kind="action">
