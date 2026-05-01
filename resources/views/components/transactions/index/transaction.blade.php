@@ -105,7 +105,10 @@
 
         <x-table.tbody>
             @foreach($transactions as $item)
-                <x-table.tr href="{{ route('transactions.show', $item->id) }}">
+                @php
+                    $rowClass = 'relative flex items-center px-1 group border-b ' . ($item->isExpense() ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-gray-100');
+                @endphp
+                <x-table.tr href="{{ route('transactions.show', $item->id) }}" class="{{ $rowClass }}">
                     @if (! $hideBulkAction)
                     <x-table.td kind="bulkaction">
                         <x-index.bulkaction.single id="{{ $item->id }}" name="{{ $item->contact->name }}" />

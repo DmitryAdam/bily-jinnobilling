@@ -39,7 +39,21 @@ class Transactions extends Controller
     {
         $this->setActiveTabForTransactions();
 
-        $transactions = Transaction::with('account', 'category', 'contact', 'taxes')->collect(['paid_at'=> 'desc']);
+        $request = request();
+        $request_sort = $request->get('sort');
+
+        $query = Transaction::with('account', 'category', 'contact', 'taxes')
+            ->usingSearchString()
+            ->sortable(['paid_at' => 'desc'])
+            ->orderBy('id', 'desc');
+
+        if ($request->expectsJson() && $request->isNotApi()) {
+            $transactions = $query->get();
+        } else {
+            $request->merge(['sort' => $request_sort]);
+            $limit = (int) $request->get('limit', setting('default.list_limit', '25'));
+            $transactions = $query->paginate($limit);
+        }
 
         $total_transactions = Transaction::count();
 

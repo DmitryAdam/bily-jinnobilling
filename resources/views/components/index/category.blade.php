@@ -7,5 +7,5 @@
         @endif
     >
     </span>
-    <span class="w-24 truncate">{{ $name }}</span>
+    <span class="whitespace-nowrap">{{ $name }}</span>
 </div>
