@@ -3,6 +3,7 @@
 return [
 
     'quotation_number'      => 'Quotation Number',
+    'bill_to'               => 'Attn To',
     'quotation_date'        => 'Quotation Date',
     'expiry_date'           => 'Expiry Date',
     'total_quotations'      => 'Total Quotations',

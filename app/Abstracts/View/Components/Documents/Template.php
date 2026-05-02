@@ -385,6 +385,9 @@ abstract class Template extends Component
             case 'purchase':
                 $default_key = 'bill_number';
                 break;
+            case 'quotation':
+                $default_key = 'quotation_number';
+                break;
             default:
                 $default_key = 'invoice_number';
                 break;
