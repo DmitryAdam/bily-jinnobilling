@@ -52,18 +52,7 @@ class CashFlow extends Widget
             ->setColors($this->getColors())
             ->setMarkersSize(5)
             ->setMarkersHover(['size' => 7])
-            ->setDataLabelsEnabled(true)
-            ->setDataLabelsEnabledOnSeries([2])
-            ->setDataLabelsFormatter($this->getProfitLabelFormatter())
-            ->setDataLabelsBackground([
-                'enabled' => true,
-                'padding' => 4,
-                'borderRadius' => 2,
-                'foreColor' => $this->getProfitColorCallback(),
-                'borderColor' => $this->getProfitColorCallback(),
-            ])
-            ->setDataLabelsStyle(['colors' => [$this->getProfitTextColorCallback()]])
-            ->setDataLabelsOffsetY(-8)
+            ->setAnnotationsPoints($this->getProfitAnnotations($profit))
             ->setTooltipShared(true)
             ->setTooltipIntersect(false)
             ->setTooltipCustom($this->getCustomTooltip())
@@ -130,44 +119,53 @@ class CashFlow extends Widget
         ];
     }
 
-    public function getProfitColorCallback(): Raw
+    public function getProfitAnnotations(array $profit): array
     {
-        return new Raw("function({ seriesIndex, dataPointIndex, w }) {
-            const v = Number(w.globals.series[seriesIndex][dataPointIndex]);
-            return v < 0 ? '#f97316' : '#7779A2';
-        }");
+        $labels = array_values($this->getLabels());
+        $points = [];
+
+        foreach ($profit as $index => $value) {
+            if ((float) $value === 0.0) {
+                continue;
+            }
+
+            $color = $value < 0 ? '#f97316' : '#7779A2';
+
+            $points[] = [
+                'x' => $labels[$index] ?? null,
+                'y' => $value,
+                'seriesIndex' => 2,
+                'marker' => ['size' => 0],
+                'label' => [
+                    'text' => $this->formatMoneyForLabel($value),
+                    'borderColor' => $color,
+                    'borderWidth' => 1,
+                    'borderRadius' => 2,
+                    'offsetY' => -8,
+                    'style' => [
+                        'background' => $color,
+                        'color' => '#ffffff',
+                        'padding' => ['left' => 6, 'right' => 6, 'top' => 2, 'bottom' => 2],
+                    ],
+                ],
+            ];
+        }
+
+        return $points;
     }
 
-    public function getProfitTextColorCallback(): Raw
+    private function formatMoneyForLabel($value): string
     {
-        return new Raw("function({ seriesIndex, dataPointIndex, w }) {
-            return '#ffffff';
-        }");
-    }
-
-    public function getProfitLabelFormatter(): Raw
-    {
-        $decimal_mark = str_replace("'", "\\'", currency()->getDecimalMark());
-        $thousands_separator = str_replace("'", "\\'", currency()->getThousandsSeparator());
-        $symbol = str_replace("'", "\\'", currency()->getSymbol());
-        $symbol_first = currency()->isSymbolFirst() ? 'true' : 'false';
         $precision = (int) currency()->getPrecision();
+        $decimal = currency()->getDecimalMark();
+        $thousands = currency()->getThousandsSeparator();
+        $symbol = currency()->getSymbol();
+        $symbol_first = currency()->isSymbolFirst();
 
-        return new Raw("function(value) {
-            const v = Number(value);
-            if (!v) return '';
-            const decimal = '" . $decimal_mark . "';
-            const thousands = '" . $thousands_separator . "';
-            const symbol = '" . $symbol . "';
-            const symbolFirst = " . $symbol_first . ";
-            const precision = " . $precision . ";
-            const sign = v < 0 ? '-' : '';
-            let n = Math.abs(v).toFixed(precision);
-            let [int, dec] = n.split('.');
-            int = int.replace(/\\B(?=(\\d{3})+(?!\\d))/g, thousands);
-            const out = dec ? int + decimal + dec : int;
-            return symbolFirst ? sign + symbol + out : sign + out + symbol;
-        }");
+        $sign = $value < 0 ? '-' : '';
+        $abs = number_format(abs((float) $value), $precision, $decimal, $thousands);
+
+        return $symbol_first ? $sign . $symbol . $abs : $sign . $abs . $symbol;
     }
 
     public function getCustomTooltip(): Raw
