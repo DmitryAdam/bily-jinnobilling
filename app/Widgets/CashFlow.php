@@ -9,6 +9,7 @@ use App\Traits\Charts;
 use App\Traits\Currencies;
 use App\Traits\DateTime;
 use App\Utilities\Date;
+use Balping\JsonRaw\Raw;
 
 class CashFlow extends Widget
 {
@@ -58,7 +59,7 @@ class CashFlow extends Widget
             ->setDataLabelsOffsetY(-8)
             ->setTooltipShared(true)
             ->setTooltipIntersect(false)
-            ->setTooltipY(['formatter' => $this->getChartLabelFormatter()])
+            ->setTooltipCustom($this->getCustomTooltip())
             ->setDataset(trans('general.incoming'), 'column', $income)
             ->setDataset(trans('general.outgoing'), 'column', $expense)
             ->setDataset(trans_choice('general.profits', 1), 'line', $profit);
@@ -120,6 +121,74 @@ class CashFlow extends Widget
             '#fb7185',
             '#7779A2',
         ];
+    }
+
+    public function getCustomTooltip(): Raw
+    {
+        $decimal_mark = str_replace("'", "\\'", currency()->getDecimalMark());
+        $thousands_separator = str_replace("'", "\\'", currency()->getThousandsSeparator());
+        $symbol = str_replace("'", "\\'", currency()->getSymbol());
+        $symbol_first = currency()->isSymbolFirst() ? 'true' : 'false';
+        $precision = (int) currency()->getPrecision();
+
+        $incoming_label = trans('general.incoming');
+        $outgoing_label = trans('general.outgoing');
+        $profit_label = trans_choice('general.profits', 1);
+
+        return new Raw("function({ series, seriesIndex, dataPointIndex, w }) {
+            const decimal = '" . $decimal_mark . "';
+            const thousands = '" . $thousands_separator . "';
+            const symbol = '" . $symbol . "';
+            const symbolFirst = " . $symbol_first . ";
+            const precision = " . $precision . ";
+
+            function fmt(v) {
+                const sign = v < 0 ? '-' : '';
+                let n = Math.abs(Number(v)).toFixed(precision);
+                let [int, dec] = n.split('.');
+                int = int.replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
+                let out = dec ? int + decimal + dec : int;
+                return symbolFirst ? sign + symbol + out : sign + out + symbol;
+            }
+
+            const labels = ['" . $incoming_label . "', '" . $outgoing_label . "', '" . $profit_label . "'];
+            const colors = ['#8bb475', '#fb7185', '#7779A2'];
+            const xLabel = w.globals.labels[dataPointIndex];
+
+            const incoming = Number(series[0][dataPointIndex]);
+            const outgoing = Number(series[1][dataPointIndex]);
+            const profit = Number(series[2][dataPointIndex]);
+
+            let rows = '';
+
+            if (incoming !== 0) {
+                rows += '<div class=\"apexcharts-tooltip-series-group apexcharts-active\" style=\"display:flex;order:1;\">'
+                    + '<span class=\"apexcharts-tooltip-marker\" style=\"background-color:' + colors[0] + ';\"></span>'
+                    + '<div class=\"apexcharts-tooltip-text\"><div class=\"apexcharts-tooltip-y-group\">'
+                    + '<span class=\"apexcharts-tooltip-text-y-label\">' + labels[0] + ': </span>'
+                    + '<span class=\"apexcharts-tooltip-text-y-value\">' + fmt(incoming) + '</span>'
+                    + '</div></div></div>';
+            }
+
+            if (outgoing !== 0) {
+                rows += '<div class=\"apexcharts-tooltip-series-group apexcharts-active\" style=\"display:flex;order:2;\">'
+                    + '<span class=\"apexcharts-tooltip-marker\" style=\"background-color:' + colors[1] + ';\"></span>'
+                    + '<div class=\"apexcharts-tooltip-text\"><div class=\"apexcharts-tooltip-y-group\">'
+                    + '<span class=\"apexcharts-tooltip-text-y-label\">' + labels[1] + ': </span>'
+                    + '<span class=\"apexcharts-tooltip-text-y-value\">' + fmt(Math.abs(outgoing)) + '</span>'
+                    + '</div></div></div>';
+            }
+
+            const profitColor = profit < 0 ? '#f97316' : colors[2];
+            rows += '<div class=\"apexcharts-tooltip-series-group apexcharts-active\" style=\"display:flex;order:3;\">'
+                + '<span class=\"apexcharts-tooltip-marker\" style=\"background-color:' + profitColor + ';\"></span>'
+                + '<div class=\"apexcharts-tooltip-text\"><div class=\"apexcharts-tooltip-y-group\">'
+                + '<span class=\"apexcharts-tooltip-text-y-label\">' + labels[2] + ': </span>'
+                + '<span class=\"apexcharts-tooltip-text-y-value\" style=\"color:' + profitColor + ';\">' + fmt(profit) + '</span>'
+                + '</div></div></div>';
+
+            return '<div class=\"apexcharts-tooltip-title\" style=\"font-family: Helvetica, Arial, sans-serif; font-size: 12px;\">' + xLabel + '</div>' + rows;
+        }");
     }
 
     private function calculateTotals($type): array
