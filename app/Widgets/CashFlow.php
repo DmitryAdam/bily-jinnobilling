@@ -55,7 +55,14 @@ class CashFlow extends Widget
             ->setDataLabelsEnabled(true)
             ->setDataLabelsEnabledOnSeries([2])
             ->setDataLabelsFormatter($this->getProfitLabelFormatter())
-            ->setDataLabelsBackground(['enabled' => true, 'foreColor' => '#7779A2', 'padding' => 4, 'borderRadius' => 2, 'borderColor' => '#7779A2'])
+            ->setDataLabelsBackground([
+                'enabled' => true,
+                'padding' => 4,
+                'borderRadius' => 2,
+                'foreColor' => $this->getProfitColorCallback(),
+                'borderColor' => $this->getProfitColorCallback(),
+            ])
+            ->setDataLabelsStyle(['colors' => [$this->getProfitTextColorCallback()]])
             ->setDataLabelsOffsetY(-8)
             ->setTooltipShared(true)
             ->setTooltipIntersect(false)
@@ -121,6 +128,21 @@ class CashFlow extends Widget
             '#fb7185',
             '#7779A2',
         ];
+    }
+
+    public function getProfitColorCallback(): Raw
+    {
+        return new Raw("function({ seriesIndex, dataPointIndex, w }) {
+            const v = Number(w.globals.series[seriesIndex][dataPointIndex]);
+            return v < 0 ? '#f97316' : '#7779A2';
+        }");
+    }
+
+    public function getProfitTextColorCallback(): Raw
+    {
+        return new Raw("function({ seriesIndex, dataPointIndex, w }) {
+            return '#ffffff';
+        }");
     }
 
     public function getProfitLabelFormatter(): Raw
