@@ -54,7 +54,7 @@ class CashFlow extends Widget
             ->setMarkersHover(['size' => 7])
             ->setDataLabelsEnabled(true)
             ->setDataLabelsEnabledOnSeries([2])
-            ->setDataLabelsFormatter($this->getChartLabelFormatter())
+            ->setDataLabelsFormatter($this->getProfitLabelFormatter())
             ->setDataLabelsBackground(['enabled' => true, 'foreColor' => '#7779A2', 'padding' => 4, 'borderRadius' => 2, 'borderColor' => '#7779A2'])
             ->setDataLabelsOffsetY(-8)
             ->setTooltipShared(true)
@@ -121,6 +121,31 @@ class CashFlow extends Widget
             '#fb7185',
             '#7779A2',
         ];
+    }
+
+    public function getProfitLabelFormatter(): Raw
+    {
+        $decimal_mark = str_replace("'", "\\'", currency()->getDecimalMark());
+        $thousands_separator = str_replace("'", "\\'", currency()->getThousandsSeparator());
+        $symbol = str_replace("'", "\\'", currency()->getSymbol());
+        $symbol_first = currency()->isSymbolFirst() ? 'true' : 'false';
+        $precision = (int) currency()->getPrecision();
+
+        return new Raw("function(value) {
+            const v = Number(value);
+            if (!v) return '';
+            const decimal = '" . $decimal_mark . "';
+            const thousands = '" . $thousands_separator . "';
+            const symbol = '" . $symbol . "';
+            const symbolFirst = " . $symbol_first . ";
+            const precision = " . $precision . ";
+            const sign = v < 0 ? '-' : '';
+            let n = Math.abs(v).toFixed(precision);
+            let [int, dec] = n.split('.');
+            int = int.replace(/\\B(?=(\\d{3})+(?!\\d))/g, thousands);
+            const out = dec ? int + decimal + dec : int;
+            return symbolFirst ? sign + symbol + out : sign + out + symbol;
+        }");
     }
 
     public function getCustomTooltip(): Raw
