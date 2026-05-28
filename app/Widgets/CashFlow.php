@@ -138,14 +138,17 @@ class CashFlow extends Widget
                 'marker' => ['size' => 0],
                 'label' => [
                     'text' => $this->formatMoneyForLabel($value),
-                    'borderColor' => $color,
-                    'borderWidth' => 1,
-                    'borderRadius' => 2,
+                    'textAnchor' => 'middle',
+                    'borderColor' => '#ffffff',
+                    'borderWidth' => 2,
+                    'borderRadius' => 4,
+                    'offsetX' => 0,
                     'offsetY' => -8,
                     'style' => [
                         'background' => $color,
                         'color' => '#ffffff',
-                        'padding' => ['left' => 6, 'right' => 6, 'top' => 2, 'bottom' => 2],
+                        'fontWeight' => 600,
+                        'padding' => ['left' => 8, 'right' => 8, 'top' => 4, 'bottom' => 4],
                     ],
                 ],
             ];
