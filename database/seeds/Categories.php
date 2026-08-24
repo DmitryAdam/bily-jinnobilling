@@ -81,6 +81,22 @@ class Categories extends Seeder
                 'enabled' => '1',
                 'created_from' => 'core::loan-payment',
             ],
+            [
+                'company_id' => $company_id,
+                'name' => 'Investasi',
+                'type' => 'income',
+                'color' => '#3b82f6',
+                'enabled' => '1',
+                'created_from' => 'core::investment',
+            ],
+            [
+                'company_id' => $company_id,
+                'name' => 'Bayar Investasi',
+                'type' => 'expense',
+                'color' => '#a855f7',
+                'enabled' => '1',
+                'created_from' => 'core::investment-payment',
+            ],
         ];
 
         $income_category_id = $expense_category_id = 0;

@@ -30,6 +30,7 @@ return [
         'last_category'     => 'Error: Can not delete the last :type category!',
         'transfer_category' => 'Error: Can not delete the transfer <b>:type</b> category!',
         'loan_category'     => 'Error: Can not delete the loan <b>:type</b> category!',
+        'investment_category' => 'Error: Can not delete the investment <b>:type</b> category!',
         'change_type'       => 'Error: Can not change the type because it has :text related!',
         'invalid_apikey'    => 'Error: The API Key entered is invalid!',
         'empty_apikey'      => 'Error: You have not entered your API Key! <a href=":url" class="font-bold underline underline-offset-4">Click here</a> to enter your API Key.',

@@ -81,7 +81,7 @@ class ShowInAdmin
 
         // Banking
         $title = trim(trans('general.banking'));
-        if ($this->canAccessMenuItem($title, ['read-banking-accounts', 'read-banking-transfers', 'read-banking-transactions', 'read-banking-reconciliations', 'read-banking-loans'])) {
+        if ($this->canAccessMenuItem($title, ['read-banking-accounts', 'read-banking-transfers', 'read-banking-transactions', 'read-banking-reconciliations', 'read-banking-loans', 'read-banking-investments'])) {
             $menu->dropdown($title, function ($sub) use ($attr) {
                 $title = trim(trans_choice('general.accounts', 2));
                 if ($this->canAccessMenuItem($title, 'read-banking-accounts')) {
@@ -106,6 +106,11 @@ class ShowInAdmin
                 $title = trim(trans_choice('general.loans', 2));
                 if ($this->canAccessMenuItem($title, 'read-banking-loans')) {
                     $sub->route('loans.index', $title, [], 50, $attr);
+                }
+
+                $title = trim(trans_choice('general.investments', 2));
+                if ($this->canAccessMenuItem($title, 'read-banking-investments')) {
+                    $sub->route('investments.index', $title, [], 60, $attr);
                 }
             }, 50, [
                 'title' => $title,

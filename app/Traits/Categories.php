@@ -92,6 +92,57 @@ trait Categories
         });
     }
 
+    public function getInvestmentIncomeCategoryId(): mixed
+    {
+        return Cache::remember('investmentIncomeCategoryId', 60, function () {
+            $id = Category::where('created_from', 'core::investment')->pluck('id')->first();
+
+            if (! $id) {
+                $category = Category::create([
+                    'company_id' => company_id(),
+                    'name' => 'Investasi',
+                    'type' => 'income',
+                    'color' => '#3b82f6',
+                    'enabled' => 1,
+                    'created_from' => 'core::investment',
+                ]);
+
+                $id = $category->id;
+            }
+
+            return $id;
+        });
+    }
+
+    public function getInvestmentExpenseCategoryId(): mixed
+    {
+        return Cache::remember('investmentExpenseCategoryId', 60, function () {
+            $id = Category::where('created_from', 'core::investment-payment')->pluck('id')->first();
+
+            if (! $id) {
+                $category = Category::create([
+                    'company_id' => company_id(),
+                    'name' => 'Bayar Investasi',
+                    'type' => 'expense',
+                    'color' => '#a855f7',
+                    'enabled' => 1,
+                    'created_from' => 'core::investment-payment',
+                ]);
+
+                $id = $category->id;
+            }
+
+            return $id;
+        });
+    }
+
+    public function isInvestmentCategory(): bool
+    {
+        $id = $this->id ?? $this->category->id ?? $this->model->id ?? 0;
+
+        return $id == $this->getInvestmentIncomeCategoryId() || $id == $this->getInvestmentExpenseCategoryId();
+    }
+
     public function isLoanCategory(): bool
     {
         $id = $this->id ?? $this->category->id ?? $this->model->id ?? 0;

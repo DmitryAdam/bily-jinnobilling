@@ -28,6 +28,7 @@ return [
         'last_category'     => 'Error: Tidak dapat menghapus kategori <b>:type</b> terakhir!',
         'transfer_category' => 'Error: Tidak dapat menghapus kategori transfer <b>:type</b>!',
         'loan_category'     => 'Error: Tidak dapat menghapus kategori piutang <b>:type</b>!',
+        'investment_category' => 'Error: Tidak dapat menghapus kategori investasi <b>:type</b>!',
         'change_type'       => 'Kesalahan: Tidak dapat mengubah jenis karena memiliki :text terkait!',
         'invalid_apikey'    => 'Galat: Token API yang dimasukkan tidak sah!',
         'import_column'     => 'Kesalahan: :message Nama kolom: :column. Nomor baris: :line.',

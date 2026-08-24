@@ -182,6 +182,10 @@ Route::group(['prefix' => 'banking'], function () {
     Route::delete('loans/{loan}/payments/{payment}', 'Banking\Loans@paymentDestroy')->name('loans.payments.destroy');
     Route::resource('loans', 'Banking\Loans', ['middleware' => ['date.format', 'money']]);
 
+    Route::post('investments/{investment}/payments', 'Banking\Investments@paymentStore')->middleware(['date.format', 'money'])->name('investments.payments.store');
+    Route::delete('investments/{investment}/payments/{payment}', 'Banking\Investments@paymentDestroy')->name('investments.payments.destroy');
+    Route::resource('investments', 'Banking\Investments', ['middleware' => ['date.format', 'money']]);
+
     Route::post('reconciliations/calculate', 'Banking\Reconciliations@calculate')->middleware(['money']);
     Route::patch('reconciliations/calculate', 'Banking\Reconciliations@calculate')->middleware(['money']);
     Route::resource('reconciliations', 'Banking\Reconciliations', ['middleware' => ['date.format', 'money', 'dropzone']]);
