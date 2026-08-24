@@ -17,6 +17,8 @@
                         <x-form.group.currency name="currency" :options="$currencies" selected="{{ ! empty($company->currency) ? $company->currency : config('setting.fallback.default.currency') }}" without-add-new />
 
                         <x-form.group.country />
+
+                        <x-form.group.file name="logo" label="{{ trans('settings.company.logo') }}" :value="$company->logo" not-required />
                     </x-slot>
                 </x-form.section>
 

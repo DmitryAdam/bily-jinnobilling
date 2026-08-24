@@ -37,7 +37,7 @@ class ModuleActivator implements ActivatorInterface
             return true;
         }
 
-        if (running_in_install() && in_array($module->getAlias(), ['offline-payments', 'paypal-standard'])) {
+        if (running_in_install() && in_array($module->getAlias(), ['offline-payments'])) {
             return true;
         }
 
@@ -147,7 +147,7 @@ class ModuleActivator implements ActivatorInterface
         $modules = Model::companyId($this->company_id)->pluck('enabled', 'alias')->toArray();
 
         foreach ($modules as $alias => $enabled) {
-            if (in_array($alias, ['offline-payments', 'paypal-standard'])) {
+            if (in_array($alias, ['offline-payments'])) {
                 continue;
             }
 

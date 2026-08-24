@@ -1,8 +1,8 @@
 <x-layouts.admin>
-    <x-slot name="title">{{ trans('general.title.invite', ['type' => trans_choice('general.users', 1)]) }}</x-slot>
+    <x-slot name="title">{{ trans('general.title.new', ['type' => trans_choice('general.users', 1)]) }}</x-slot>
 
     <x-slot name="favorite"
-        title="{{ trans('general.title.invite', ['type' => trans_choice('general.users', 1)]) }}"
+        title="{{ trans('general.title.new', ['type' => trans_choice('general.users', 1)]) }}"
         icon="people"
         route="users.create"
     ></x-slot>
@@ -16,10 +16,14 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <div class="sm:col-span-3 grid gap-x-8 gap-y-6 grid-rows-2">
+                        <div class="sm:col-span-3 grid gap-x-8 gap-y-6 grid-rows-4">
                             <x-form.group.text name="name" label="{{ trans('general.name') }}" />
 
                             <x-form.group.email name="email" label="{{ trans('general.email') }}" />
+
+                            <x-form.group.password name="password" :label="trans('auth.password.pass')" />
+
+                            <x-form.group.password name="password_confirmation" :label="trans('auth.password.pass_confirm')" />
                         </div>
 
                         <div class="sm:col-span-3">

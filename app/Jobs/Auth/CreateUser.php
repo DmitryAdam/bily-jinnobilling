@@ -104,6 +104,11 @@ class CreateUser extends Job implements HasOwner, HasSource, ShouldCreate
             return true;
         }
 
+        // ponytail: admin sets the password directly, no invitation needed
+        if (! empty($this->request->get('password'))) {
+            return false;
+        }
+
         if (app()->runningInConsole()) {
             return false;
         }

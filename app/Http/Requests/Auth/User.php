@@ -60,9 +60,12 @@ class User extends FormRequest
             $id = null;
             $companies = 'required';
             $roles = 'required|string';
+            $create_password = 'required|min:6|confirmed';
         }
 
         $email .= '|unique:users,email,' . ($id ?? 'null') . ',id,deleted_at,NULL';
+
+        $create_password = $create_password ?? null;
 
         $change_password = $this->request->get('change_password') == true || $this->request->get('change_password') != null;
 
@@ -73,7 +76,7 @@ class User extends FormRequest
             'name'              => 'required|string',
             'email'             => $email,
             'current_password'  => 'required_if:change_password,true' . $current_password,
-            'password'          => 'required_if:change_password,true' . $password,
+            'password'          => $create_password ?: 'required_if:change_password,true' . $password,
             'companies'         => $companies,
             'roles'             => $roles,
             'picture'           => $picture,

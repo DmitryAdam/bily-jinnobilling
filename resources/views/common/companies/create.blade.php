@@ -19,6 +19,8 @@
                         <x-form.group.currency name="currency" :options="$currencies" without-add-new />
 
                         <x-form.group.country />
+
+                        <x-form.group.file name="logo" label="{{ trans('settings.company.logo') }}" not-required />
                     </x-slot>
                 </x-form.section>
 

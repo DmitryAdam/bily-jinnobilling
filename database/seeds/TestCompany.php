@@ -112,7 +112,7 @@ class TestCompany extends Seeder
 
     private function installModules()
     {
-        $core_modules = ['offline-payments', 'paypal-standard'];
+        $core_modules = ['offline-payments'];
 
         $modules = module()->all();
 
