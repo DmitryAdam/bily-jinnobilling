@@ -2,7 +2,7 @@
     @push('css')
         <style>
             /* wide table: unbox container on transactions index */
-            #main-body > .container { max-width: 100%; padding-left: 1.5rem; padding-right: 1.5rem; }
+            #main-body > .container { max-width: 90%; }
         </style>
     @endpush
 
