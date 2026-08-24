@@ -207,7 +207,7 @@
                     @stack('description_td_start')
                     <x-table.td class="w-3/12" hidden-mobile>
                         @stack('description_td_inside_start')
-                        <div class="truncate" title="{{ $item->description }}">
+                        <div class="line-clamp-2 whitespace-normal break-words" title="{{ $item->description }}">
                             {{ $item->description ?: '-' }}
                         </div>
                         @stack('description_td_inside_end')

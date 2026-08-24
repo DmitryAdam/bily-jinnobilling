@@ -1,4 +1,11 @@
 <x-layouts.admin>
+    @push('css')
+        <style>
+            /* wide table: unbox container on transactions index */
+            #main-body > .container { max-width: 100%; padding-left: 1.5rem; padding-right: 1.5rem; }
+        </style>
+    @endpush
+
     <x-slot name="title">
         {{ trans_choice('general.transactions', 2) }}
     </x-slot>

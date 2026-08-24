@@ -542,6 +542,19 @@ class Company extends Eloquent implements Ownable
         return $this->getMedia('company.logo')->last();
     }
 
+    /**
+     * Get the company logo URL, falling back to the default image.
+     */
+    public function getLogoUrlAttribute()
+    {
+        $logo = $this->getAttribute('logo');
+
+        // Scope the URL to this company, the media tenant scope rejects cross-company ids
+        return is_numeric($logo)
+            ? route('uploads.get', ['company_id' => $this->id, 'id' => $logo])
+            : asset('img/company.png');
+    }
+
     public function getLocationAttribute()
     {
         $country = setting('company.country');

@@ -6,7 +6,7 @@
     <span class="material-icons text-black js-hamburger-menu">menu</span>
 
     <div class="flex items-center m-auto">
-        <img src="{{ asset('img/akaunting-logo-green.svg') }}" class="w-8 m-auto" alt="Akaunting" />
+        <img src="{{ company()?->logo_url ?? asset('img/company.png') }}" class="w-8 h-8 m-auto rounded-full object-contain" alt="{{ setting('company.name') }}" />
         <span class="ltr:ml-2 rtl:mr-2">{{ Str::limit(setting('company.name'), 22) }}</span>
     </div>
 
@@ -88,11 +88,6 @@
             </x-tooltip>
             @endcan
 
-            <x-tooltip id="tooltip-search" placement="right" message="{{ trans('general.search') }}">
-                <button type="button" class="flex items-center menu-button justify-center w-8 h-8 mb-2.5 relative cursor-pointer outline-none">
-                    <span id="menu-search-icon" name="search" class="material-icons-outlined text-purple text-2xl pointer-events-none">search</span>
-                </button>
-            </x-tooltip>
 
             <x-tooltip id="tooltip-new" placement="right" message="{{ trans('general.new') }}">
                 <button type="button" class="add-item menu-button flex items-center justify-center w-8 h-8 mb-2.5 cursor-pointer js-menu-toggles" data-menu="add-new-menu">
@@ -118,7 +113,7 @@
         <div class="relative mb-5 cursor-pointer">
             <button type="button" class="flex items-center" data-dropdown-toggle="dropdown-menu-company">
                 <div class="w-8 h-8 flex items-center justify-center">
-                    <img src="{{ asset('img/akaunting-logo-green.svg') }}" class="w-6 h-6" alt="Akaunting" />
+                    <img src="{{ company()?->logo_url ?? asset('img/company.png') }}" class="w-6 h-6 rounded-full object-contain" alt="{{ setting('company.name') }}" />
                 </div>
 
                 <div class="flex ltr:ml-2 rtl:mr-2">
@@ -140,7 +135,7 @@
                 @foreach($companies as $com)
                     <x-link href="{{ route('companies.switch', $com->id) }}" id="menu-company-{{ $com->id }}" class="h-9 leading-9 flex items-center text-sm px-2" override="class" role="menuitem" tabindex="-1">
                         <div class="w-full h-full flex items-center rounded-md px-2 hover:bg-lilac-100">
-                            <span class="material-icons-outlined text-purple text-xl">business</span>
+                            <img src="{{ $com->logo_url }}" class="w-5 h-5 rounded-full object-contain shrink-0" alt="{{ $com->name }}" />
                             <span class="ltr:pl-2 rtl:pr-2 text-purple text-xs truncate">{{ Str::limit($com->name, 18) }}</span>
                         </div>
                     </x-link>

@@ -1,45 +1,7 @@
-var staticCacheName = "pwa-v" + new Date().getTime();
-var filesToCache = [
-    'img/pwa/icon-192x192.png',
-    'img/pwa/icon-512x512.png'
-];
+// ponytail: no offline cache — install/activate were already disabled upstream,
+// so the old fetch handler only broke requests. Empty handler keeps PWA installable.
+self.addEventListener('install', () => self.skipWaiting());
 
-/*
-// Cache on install
-self.addEventListener("install", event => {
-    this.skipWaiting();
-    event.waitUntil(
-        caches.open(staticCacheName)
-            .then(cache => {
-                return cache.addAll(filesToCache);
-            })
-    )
-});
-*/
-/*
-// Clear cache on activate
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames
-                    .filter(cacheName => (cacheName.startsWith("pwa-")))
-                    .filter(cacheName => (cacheName !== staticCacheName))
-                    .map(cacheName => caches.delete(cacheName))
-            );
-        })
-    );
-});*/
+self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 
-// Serve from Cache
-self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
-            .catch(() => {
-                return caches.match('offline');
-            })
-    )
-});
+self.addEventListener('fetch', () => {});

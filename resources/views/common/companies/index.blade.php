@@ -81,7 +81,7 @@
 
                             <x-table.td class="w-8/12 sm:w-4/12">
                                 <x-slot name="first" class="flex items-center" override="class">
-                                    <img src="{{ is_numeric($item->logo) ? Storage::url($item->logo) : asset('img/company.png') }}" class="w-6 h-6 rounded-full object-contain ltr:mr-2 rtl:ml-2 shrink-0" alt="{{ $item->name }}" />
+                                    <img src="{{ $item->logo_url }}" class="w-6 h-6 rounded-full object-contain ltr:mr-2 rtl:ml-2 shrink-0" alt="{{ $item->name }}" />
 
                                     <div class="font-bold truncate">
                                         {{ $item->name }}
