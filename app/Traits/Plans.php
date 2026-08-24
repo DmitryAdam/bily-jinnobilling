@@ -58,7 +58,8 @@ trait Plans
 
     public function getPlanLimitByType($type): object
     {
-        if (! config('app.installed') || running_in_test()) {
+        // ponytail: self-hosted personal use — plan limits disabled, drop this block to restore
+        if (true) {
             $limit = new \stdClass();
 
             $limit->action_status = true;
