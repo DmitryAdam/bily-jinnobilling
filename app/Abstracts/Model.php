@@ -63,7 +63,7 @@ abstract class Model extends Eloquent implements Ownable
      */
     public function owner()
     {
-        return $this->belongsTo(user_model_class(), 'created_by', 'id')->withDefault(['name' => trans('general.na')]);
+        return $this->belongsTo(user_model_class(), 'created_by', 'id')->withTrashed()->withDefault(['name' => trans('general.na')]);
     }
 
     /**
