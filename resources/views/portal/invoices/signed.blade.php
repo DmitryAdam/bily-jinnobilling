@@ -1,7 +1,15 @@
+@php
+    $doc_type = $invoice->type;
+    $setting_prefix = config("type.document.$doc_type.setting.prefix", "invoice");
+    $is_payable = ! empty(config("type.document.$doc_type.transaction_type"));
+    $show_payment = $is_payable && ! empty($payment_methods) && ! in_array($invoice->status, ["paid", "cancelled"]);
+    $has_sidebar = $show_payment || $invoice->transactions->count();
+@endphp
+
 <div class="w-full lg:max-w-6xl px-4 lg:px-0  m-auto">
     <x-layouts.signed>
         <x-slot name="title">
-            {{ setting('invoice.title', trans_choice('general.invoices', 1)) . ': ' . $invoice->document_number }}
+            {{ setting($setting_prefix . ".title", trans_choice("general." . Str::plural($doc_type), 1)) . ": " . $invoice->document_number }}
         </x-slot>
 
         <x-slot name="buttons">
@@ -28,8 +36,9 @@
 
         <x-slot name="content">
             <div class="flex flex-col lg:flex-row my-10 lg:space-x-24 rtl:space-x-reverse space-y-4 lg:space-y-0">
+                @if ($has_sidebar)
                 <div class="w-full lg:w-5/12">
-                    @if (! empty($payment_methods) && ! in_array($invoice->status, ['paid', 'cancelled']))
+                    @if ($show_payment)
                         <div class="tabs w-full" x-data="{ active: '{{ reset($payment_methods) }}' }">
                             <div role="tablist" class="flex flex-wrap">
                                 @php $is_active = true; @endphp
@@ -134,12 +143,13 @@
                         </x-show.accordion>
                     @endif
                 </div>
+                @endif
 
-                <div class="w-full lg:w-7/12">
+                <div class="w-full {{ $has_sidebar ? 'lg:w-7/12' : '' }}">
                     <x-documents.show.template
-                        type="invoice"
+                        type="{{ $doc_type }}"
                         :document="$invoice"
-                        document-template="{{ setting('invoice.template', 'default') }}"
+                        document-template="{{ setting($setting_prefix . ".template", "default") }}"
                     />
                 </div>
             </div>

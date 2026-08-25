@@ -477,8 +477,7 @@ html[dir='rtl'] .text-right
 
 .d-logo
 {
-    padding-top: 18px;
-    padding-bottom: 30px;
+    height: 75px;
 }
 
 .d-note
