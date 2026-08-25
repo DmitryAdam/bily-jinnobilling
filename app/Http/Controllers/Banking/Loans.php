@@ -17,44 +17,74 @@ use App\Models\Setting\Currency;
 
 class Loans extends Controller
 {
+    /**
+     * Loans and investments are the same records with the money flowing the
+     * other way; the subclass only swaps this.
+     */
+    public string $type = 'loan';
+
+    protected function slug(): string
+    {
+        return Loan::TYPES[$this->type]['slug'];
+    }
+
+    protected function label(int $count = 1): string
+    {
+        return trans_choice('general.' . $this->slug(), $count);
+    }
+
+    /**
+     * Everything the views need to render either type.
+     */
+    protected function chrome(array $extra = []): array
+    {
+        return array_merge([
+            'type' => $this->type,
+            'slug' => $this->slug(),
+            'lang' => $this->slug(),
+            'icon' => Loan::TYPES[$this->type]['icon'],
+            'bulkAction' => 'App\\BulkActions\\Banking\\' . ucfirst($this->slug()),
+        ], $extra);
+    }
+
     public function index()
     {
-        $loans = Loan::with('account', 'payments')->collect(['issued_at' => 'desc']);
+        $items = Loan::type($this->type)->with('account', 'payments')->collect(['issued_at' => 'desc']);
 
-        $totalPiutang = Loan::sum('amount');
-        $totalPaid = LoanPayment::sum('amount');
-        $totalUnpaid = $totalPiutang - $totalPaid;
+        $total = Loan::type($this->type)->sum('amount');
+        $totalPaid = LoanPayment::whereHas('loan', fn ($q) => $q->type($this->type))->sum('amount');
 
-        $currency = default_currency();
-
-        return $this->response('banking.loans.index', compact('loans', 'totalPiutang', 'totalPaid', 'totalUnpaid', 'currency'));
+        return $this->response('banking.loans.index', $this->chrome([
+            'items'        => $items,
+            'total'        => $total,
+            'totalPaid'    => $totalPaid,
+            'totalUnpaid'  => $total - $totalPaid,
+            'currency'     => default_currency(),
+        ]));
     }
 
     public function create()
     {
-        $accounts = Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
-
-        $currency = Currency::where('code', default_currency())->first();
-
-        return view('banking.loans.create', compact('accounts', 'currency'));
+        return view('banking.loans.create', $this->chrome([
+            'accounts' => $this->accounts(),
+            'currency' => Currency::where('code', default_currency())->first(),
+        ]));
     }
 
     public function store(Request $request)
     {
+        $request->merge(['type' => $this->type]);
+
         $response = $this->ajaxDispatch(new CreateLoan($request));
 
         if ($response['success']) {
-            $response['redirect'] = route('loans.show', $response['data']->id);
+            $response['redirect'] = route($this->slug() . '.show', $response['data']->id);
 
-            $message = trans('messages.success.created', ['type' => trans_choice('general.loans', 1)]);
-
-            flash($message)->success();
+            flash(trans('messages.success.created', ['type' => $this->label()]))->success();
         } else {
-            $response['redirect'] = route('loans.create');
+            $response['redirect'] = route($this->slug() . '.create');
 
-            $message = $response['message'];
-
-            flash($message)->error()->important();
+            flash($response['message'])->error()->important();
         }
 
         return response()->json($response);
@@ -64,22 +94,22 @@ class Loans extends Controller
     {
         $loan->load('account', 'payments.account', 'payments.transaction');
 
-        $accounts = Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
-
-        $currency = Currency::where('code', $loan->currency_code)->first();
-
-        return view('banking.loans.show', compact('loan', 'accounts', 'currency'));
+        return view('banking.loans.show', $this->chrome([
+            'loan'     => $loan,
+            'accounts' => $this->accounts(),
+            'currency' => Currency::where('code', $loan->currency_code)->first(),
+        ]));
     }
 
     public function edit(Loan $loan)
     {
         $loan->load('account');
 
-        $accounts = Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
-
-        $currency = Currency::where('code', $loan->currency_code)->first();
-
-        return view('banking.loans.edit', compact('loan', 'accounts', 'currency'));
+        return view('banking.loans.edit', $this->chrome([
+            'loan'     => $loan,
+            'accounts' => $this->accounts(),
+            'currency' => Currency::where('code', $loan->currency_code)->first(),
+        ]));
     }
 
     public function update(Request $request, Loan $loan)
@@ -87,17 +117,13 @@ class Loans extends Controller
         $response = $this->ajaxDispatch(new UpdateLoan($loan, $request));
 
         if ($response['success']) {
-            $response['redirect'] = route('loans.show', $loan->id);
+            $response['redirect'] = route($this->slug() . '.show', $loan->id);
 
-            $message = trans('messages.success.updated', ['type' => trans_choice('general.loans', 1)]);
-
-            flash($message)->success();
+            flash(trans('messages.success.updated', ['type' => $this->label()]))->success();
         } else {
-            $response['redirect'] = route('loans.edit', $loan->id);
+            $response['redirect'] = route($this->slug() . '.edit', $loan->id);
 
-            $message = $response['message'];
-
-            flash($message)->error()->important();
+            flash($response['message'])->error()->important();
         }
 
         return response()->json($response);
@@ -107,16 +133,12 @@ class Loans extends Controller
     {
         $response = $this->ajaxDispatch(new DeleteLoan($loan));
 
-        $response['redirect'] = route('loans.index');
+        $response['redirect'] = route($this->slug() . '.index');
 
         if ($response['success']) {
-            $message = trans('messages.success.deleted', ['type' => trans_choice('general.loans', 1)]);
-
-            flash($message)->success();
+            flash(trans('messages.success.deleted', ['type' => $this->label()]))->success();
         } else {
-            $message = $response['message'];
-
-            flash($message)->error()->important();
+            flash($response['message'])->error()->important();
         }
 
         return response()->json($response);
@@ -128,18 +150,12 @@ class Loans extends Controller
 
         $response = $this->ajaxDispatch(new CreateLoanPayment($request));
 
+        $response['redirect'] = route($this->slug() . '.show', $loan->id);
+
         if ($response['success']) {
-            $response['redirect'] = route('loans.show', $loan->id);
-
-            $message = trans('messages.success.created', ['type' => trans('loans.payment')]);
-
-            flash($message)->success();
+            flash(trans('messages.success.created', ['type' => trans($this->slug() . '.payment')]))->success();
         } else {
-            $response['redirect'] = route('loans.show', $loan->id);
-
-            $message = $response['message'];
-
-            flash($message)->error()->important();
+            flash($response['message'])->error()->important();
         }
 
         return response()->json($response);
@@ -149,18 +165,19 @@ class Loans extends Controller
     {
         $response = $this->ajaxDispatch(new DeleteLoanPayment($payment));
 
-        $response['redirect'] = route('loans.show', $loan->id);
+        $response['redirect'] = route($this->slug() . '.show', $loan->id);
 
         if ($response['success']) {
-            $message = trans('messages.success.deleted', ['type' => trans('loans.payment')]);
-
-            flash($message)->success();
+            flash(trans('messages.success.deleted', ['type' => trans($this->slug() . '.payment')]))->success();
         } else {
-            $message = $response['message'];
-
-            flash($message)->error()->important();
+            flash($response['message'])->error()->important();
         }
 
         return response()->json($response);
+    }
+
+    protected function accounts()
+    {
+        return Account::enabled()->orderBy('name')->with('currency')->get()->pluck('title', 'id');
     }
 }

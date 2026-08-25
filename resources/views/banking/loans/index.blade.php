@@ -1,18 +1,18 @@
 <x-layouts.admin>
     <x-slot name="title">
-        {{ trans_choice('general.loans', 2) }}
+        {{ trans_choice('general.' . $slug, 2) }}
     </x-slot>
 
     <x-slot name="favorite"
-        title="{{ trans_choice('general.loans', 2) }}"
-        icon="account_balance_wallet"
-        route="loans.index"
+        title="{{ trans_choice('general.' . $slug, 2) }}"
+        icon="{{ $icon }}"
+        route="{{ $slug }}.index"
     ></x-slot>
 
     <x-slot name="buttons">
-        @can('create-banking-loans')
-            <x-link href="{{ route('loans.create') }}" kind="primary">
-                {{ trans('general.title.new', ['type' => trans_choice('general.loans', 1)]) }}
+        @can('create-banking-' . $slug)
+            <x-link href="{{ route($slug . '.create') }}" kind="primary">
+                {{ trans('general.title.new', ['type' => trans_choice('general.' . $slug, 1)]) }}
             </x-link>
         @endcan
     </x-slot>
@@ -23,13 +23,13 @@
             <div class="bg-white rounded-xl border border-gray-200 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Total Piutang</p>
+                        <p class="text-sm text-gray-500">{{ trans($lang . '.total_lent') }}</p>
                         <p class="text-xl font-bold text-gray-800 mt-1">
-                            <x-money :amount="$totalPiutang" :currency="$currency" />
+                            <x-money :amount="$total" :currency="$currency" />
                         </p>
                     </div>
                     <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100">
-                        <span class="material-icons text-blue-600 text-xl">account_balance_wallet</span>
+                        <span class="material-icons text-blue-600 text-xl">{{ $icon }}</span>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
             <div class="bg-white rounded-xl border border-gray-200 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Total Terbayar</p>
+                        <p class="text-sm text-gray-500">{{ trans($lang . '.total_repaid') }}</p>
                         <p class="text-xl font-bold text-green-600 mt-1">
                             <x-money :amount="$totalPaid" :currency="$currency" />
                         </p>
@@ -51,7 +51,7 @@
             <div class="bg-white rounded-xl border border-gray-200 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Total Belum Terbayar</p>
+                        <p class="text-sm text-gray-500">{{ trans($lang . '.total_outstanding') }}</p>
                         <p class="text-xl font-bold text-red-600 mt-1">
                             <x-money :amount="$totalUnpaid" :currency="$currency" />
                         </p>
@@ -63,11 +63,11 @@
             </div>
         </div>
 
-        @if ($loans->count() || request()->get('search', false))
+        @if ($items->count() || request()->get('search', false))
             <x-index.container>
                 <x-index.search
                     search-string="App\Models\Banking\Loan"
-                    bulk-action="App\BulkActions\Banking\Loans"
+                    :bulk-action="$bulkAction"
                 />
 
                 <div class="overflow-x-auto">
@@ -79,7 +79,7 @@
                                 </x-table.th>
 
                                 <x-table.th class="w-2/12">
-                                    <x-sortablelink column="loan_number" title="{{ trans('loans.loan_number') }}" />
+                                    <x-sortablelink column="loan_number" title="{{ trans($lang . '.number') }}" />
                                 </x-table.th>
 
                                 <x-table.th class="w-1/12">
@@ -87,7 +87,7 @@
                                 </x-table.th>
 
                                 <x-table.th class="w-2/12">
-                                    <x-sortablelink column="contact_name" title="{{ trans('loans.contact_name') }}" />
+                                    <x-sortablelink column="contact_name" title="{{ trans($lang . '.contact_name') }}" />
                                 </x-table.th>
 
                                 <x-table.th class="w-2/12">
@@ -99,24 +99,24 @@
                                 </x-table.th>
 
                                 <x-table.th class="w-2/12" kind="amount">
-                                    {{ trans('loans.paid') }}
+                                    {{ trans($lang . '.paid') }}
                                 </x-table.th>
 
                                 <x-table.th class="w-2/12" kind="amount">
-                                    {{ trans('loans.remaining') }}
+                                    {{ trans($lang . '.remaining') }}
                                 </x-table.th>
                             </x-table.tr>
                         </x-table.thead>
 
                         <x-table.tbody>
-                            @foreach($loans as $item)
-                                <x-table.tr href="{{ route('loans.show', $item->id) }}">
+                            @foreach($items as $item)
+                                <x-table.tr href="{{ route($slug . '.show', $item->id) }}">
                                     <x-table.td kind="bulkaction">
                                         <x-index.bulkaction.single id="{{ $item->id }}" name="{{ $item->contact_name }}" />
                                     </x-table.td>
 
                                     <x-table.td class="w-2/12">
-                                        <a href="{{ route('loans.show', $item->id) }}" class="text-purple font-medium">{{ $item->loan_number }}</a>
+                                        <a href="{{ route($slug . '.show', $item->id) }}" class="text-purple font-medium">{{ $item->loan_number }}</a>
                                     </x-table.td>
 
                                     <x-table.td class="w-1/12">
@@ -176,10 +176,10 @@
                     </x-table>
                 </div>
 
-                <x-pagination :items="$loans" />
+                <x-pagination :items="$items" />
             </x-index.container>
         @else
-            <x-empty-page group="banking" page="loans" />
+            <x-empty-page group="banking" page="{{ $slug }}" />
         @endif
     </x-slot>
 

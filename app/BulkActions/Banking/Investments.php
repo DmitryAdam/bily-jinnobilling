@@ -2,14 +2,8 @@
 
 namespace App\BulkActions\Banking;
 
-use App\Abstracts\BulkAction;
-use App\Jobs\Banking\DeleteInvestment;
-use App\Models\Banking\Investment;
-
-class Investments extends BulkAction
+class Investments extends Loans
 {
-    public $model = Investment::class;
-
     public $text = 'general.investments';
 
     public $path = [
@@ -25,17 +19,4 @@ class Investments extends BulkAction
             'permission' => 'delete-banking-investments',
         ],
     ];
-
-    public function destroy($request)
-    {
-        $investments = $this->getSelectedRecords($request);
-
-        foreach ($investments as $investment) {
-            try {
-                $this->dispatch(new DeleteInvestment($investment));
-            } catch (\Exception $e) {
-                flash($e->getMessage())->error()->important();
-            }
-        }
-    }
 }

@@ -36,11 +36,6 @@ class ViewComposer extends Provider
             ['components.layouts.admin.notifications'],
             'App\Http\ViewComposers\ReadOnlyNotification'
         );
-
-        View::composer(
-            ['components.layouts.admin.header'],
-            'App\Http\ViewComposers\PlanLimits'
-        );
     }
 
     /**

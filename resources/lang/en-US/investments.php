@@ -2,17 +2,24 @@
 
 return [
 
-    'investment_number'   => 'Investment Number',
-    'contact_name'        => 'Investor Name',
-    'investment_details'  => 'Investment Details',
-    'summary'             => 'Summary',
-    'total_amount'        => 'Total Amount',
-    'paid'                => 'Repaid',
-    'remaining'           => 'Outstanding',
-    'payment'             => 'Investment Repayment',
-    'payment_history'     => 'Repayment History',
-    'add_payment'         => 'Add Repayment',
-    'no_payments'         => 'No repayments recorded yet.',
+    'number'            => 'Investment Number',
+    'contact_name'      => 'Investor Name',
+    'details'           => 'Investment Details',
+    'summary'           => 'Summary',
+    'total_amount'      => 'Total Amount',
+    'paid'              => 'Repaid',
+    'remaining'         => 'Outstanding',
+    'payment'           => 'Investment Repayment',
+    'payment_history'   => 'Repayment History',
+    'add_payment'       => 'Add Repayment',
+    'no_payments'       => 'No repayments recorded yet.',
+
+    'total_lent'        => 'Total Invested',
+    'total_repaid'      => 'Total Returned',
+    'total_outstanding' => 'Outstanding',
+
+    'transaction_description' => 'Investment :number - :name',
+    'payment_description'     => 'Investment return :number - :name',
 
     'statuses' => [
         'active'    => 'Active',

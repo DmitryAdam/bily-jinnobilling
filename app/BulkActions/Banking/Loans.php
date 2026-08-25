@@ -28,9 +28,7 @@ class Loans extends BulkAction
 
     public function destroy($request)
     {
-        $loans = $this->getSelectedRecords($request);
-
-        foreach ($loans as $loan) {
+        foreach ($this->getSelectedRecords($request) as $loan) {
             try {
                 $this->dispatch(new DeleteLoan($loan));
             } catch (\Exception $e) {

@@ -2,9 +2,9 @@
 
 return [
 
-    'loan_number'       => 'Loan Number',
+    'number'            => 'Loan Number',
     'contact_name'      => 'Contact Name',
-    'loan_details'      => 'Loan Details',
+    'details'           => 'Loan Details',
     'summary'           => 'Summary',
     'total_amount'      => 'Total Amount',
     'paid'              => 'Paid',
@@ -13,6 +13,13 @@ return [
     'payment_history'   => 'Payment History',
     'add_payment'       => 'Add Payment',
     'no_payments'       => 'No payments recorded yet.',
+
+    'total_lent'        => 'Total Lent',
+    'total_repaid'      => 'Total Repaid',
+    'total_outstanding' => 'Total Outstanding',
+
+    'transaction_description' => 'Loan :number - :name',
+    'payment_description'     => 'Loan repayment :number - :name',
 
     'statuses' => [
         'active'    => 'Active',

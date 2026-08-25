@@ -93,3 +93,6 @@ modules/*
 !modules/.gitkeep
 .laravelstatsrc
 .DS_Store
+
+# Local Claude Code settings
+.claude/

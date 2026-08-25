@@ -4,14 +4,14 @@
     </x-slot>
 
     <x-slot name="favorite"
-        title="{{ trans_choice('general.loans', 2) }}"
-        icon="account_balance_wallet"
-        :route="['loans.show', $loan->id]"
+        title="{{ trans_choice('general.' . $slug, 2) }}"
+        icon="{{ $icon }}"
+        :route="[$slug . '.show', $loan->id]"
     ></x-slot>
 
     <x-slot name="buttons">
-        <x-link href="{{ route('loans.index') }}">
-            {{ trans('general.go_back', ['type' => trans_choice('general.loans', 2)]) }}
+        <x-link href="{{ route($slug . '.index') }}">
+            {{ trans('general.go_back', ['type' => trans_choice('general.' . $slug, 2)]) }}
         </x-link>
     </x-slot>
 
@@ -21,30 +21,30 @@
             <div class="w-full lg:w-2/3">
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4 border-b pb-2">
-                        <h3 class="text-lg font-semibold">{{ trans('loans.loan_details') }}</h3>
+                        <h3 class="text-lg font-semibold">{{ trans($lang . '.details') }}</h3>
                         @if ($loan->status == 'paid')
                             <span class="px-3 py-1 text-sm font-medium rounded-xl bg-green-100 text-green-800">
-                                {{ trans('loans.statuses.paid') }}
+                                {{ trans($lang . '.statuses.paid') }}
                             </span>
                         @elseif ($loan->status == 'partial')
                             <span class="px-3 py-1 text-sm font-medium rounded-xl bg-yellow-100 text-yellow-800">
-                                {{ trans('loans.statuses.partial') }}
+                                {{ trans($lang . '.statuses.partial') }}
                             </span>
                         @else
                             <span class="px-3 py-1 text-sm font-medium rounded-xl bg-blue-100 text-blue-800">
-                                {{ trans('loans.statuses.active') }}
+                                {{ trans($lang . '.statuses.active') }}
                             </span>
                         @endif
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <span class="text-sm text-gray-500">{{ trans('loans.loan_number') }}</span>
+                            <span class="text-sm text-gray-500">{{ trans($lang . '.number') }}</span>
                             <p class="font-semibold text-purple text-lg">{{ $loan->loan_number }}</p>
                         </div>
 
                         <div>
-                            <span class="text-sm text-gray-500">{{ trans('loans.contact_name') }}</span>
+                            <span class="text-sm text-gray-500">{{ trans($lang . '.contact_name') }}</span>
                             <p class="font-medium">{{ $loan->contact_name }}</p>
                         </div>
 
@@ -78,19 +78,19 @@
             <div class="w-full lg:w-1/3 flex flex-col gap-4">
                 {{-- Summary --}}
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold mb-4 border-b pb-2">{{ trans('loans.summary') }}</h3>
+                    <h3 class="text-lg font-semibold mb-4 border-b pb-2">{{ trans($lang . '.summary') }}</h3>
 
                     <div class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-gray-500">{{ trans('loans.total_amount') }}</span>
+                            <span class="text-gray-500">{{ trans($lang . '.total_amount') }}</span>
                             <span class="font-semibold"><x-money :amount="$loan->amount" :currency="$loan->currency_code" /></span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500">{{ trans('loans.paid') }}</span>
+                            <span class="text-gray-500">{{ trans($lang . '.paid') }}</span>
                             <span class="font-semibold text-green-600"><x-money :amount="$loan->paid_amount" :currency="$loan->currency_code" /></span>
                         </div>
                         <div class="flex justify-between border-t pt-3">
-                            <span class="text-gray-500 font-semibold">{{ trans('loans.remaining') }}</span>
+                            <span class="text-gray-500 font-semibold">{{ trans($lang . '.remaining') }}</span>
                             <span class="font-bold text-lg"><x-money :amount="$loan->remaining_amount" :currency="$loan->currency_code" /></span>
                         </div>
                     </div>
@@ -98,11 +98,11 @@
 
                 {{-- Add Payment Button --}}
                 @if ($loan->status != 'paid')
-                    @can('create-banking-loans')
+                    @can('create-banking-' . $slug)
                         <div class="bg-white rounded-xl border border-gray-200 p-6">
                             <button type="button" class="w-full flex items-center justify-center bg-green hover:bg-green-700 text-white px-6 py-2.5 text-base rounded-lg" @click="payment_modal = true">
                                 <span class="material-icons text-base mr-2">add</span>
-                                {{ trans('loans.add_payment') }}
+                                {{ trans($lang . '.add_payment') }}
                             </button>
                         </div>
                     @endcan
@@ -112,7 +112,7 @@
 
         {{-- Payment History --}}
         <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
-            <h3 class="text-lg font-semibold mb-4 border-b pb-2">{{ trans('loans.payment_history') }}</h3>
+            <h3 class="text-lg font-semibold mb-4 border-b pb-2">{{ trans($lang . '.payment_history') }}</h3>
 
             @if ($loan->payments->count())
                 <div class="overflow-x-auto">
@@ -146,8 +146,8 @@
                                         {{ $payment->description ?? '-' }}
                                     </td>
                                     <td class="py-3 text-center">
-                                        @can('delete-banking-loans')
-                                            <x-delete-link :model="$payment" :action="route('loans.payments.destroy', [$loan->id, $payment->id])" model-title="{{ trans('loans.payment') }}" />
+                                        @can('delete-banking-' . $slug)
+                                            <x-delete-link :model="$payment" :action="route($slug . '.payments.destroy', [$loan->id, $payment->id])" model-title="{{ trans($lang . '.payment') }}" />
                                         @endcan
                                     </td>
                                 </tr>
@@ -156,22 +156,22 @@
                     </table>
                 </div>
             @else
-                <p class="text-gray-500 text-sm">{{ trans('loans.no_payments') }}</p>
+                <p class="text-gray-500 text-sm">{{ trans($lang . '.no_payments') }}</p>
             @endif
         </div>
 
     </x-slot>
 
     @if ($loan->status != 'paid')
-        @can('create-banking-loans')
+        @can('create-banking-' . $slug)
             @push('content_content_end')
                 <akaunting-modal
                     modal-dialog-class="max-w-screen-md"
                     :show="payment_modal"
                     @cancel="payment_modal = false"
-                    :title="'{{ trans('loans.add_payment') }}'">
+                    :title="'{{ trans($lang . '.add_payment') }}'">
                     <template #modal-body>
-                        <x-form id="loan-payment" action="{{ route('loans.payments.store', $loan->id) }}">
+                        <x-form id="loan-payment" action="{{ route($slug . '.payments.store', $loan->id) }}">
                             <div class="p-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                                     <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" placeholder="{{ trans('general.form.select.field', ['field' => trans_choice('general.accounts', 1)]) }}" />
@@ -197,7 +197,7 @@
 
                                 <button type="submit" class="relative flex items-center justify-center bg-green hover:bg-green-700 text-white px-6 py-1.5 text-base rounded-lg disabled:bg-green-100">
                                     <x-button.loading>
-                                        {{ trans('loans.add_payment') }}
+                                        {{ trans($lang . '.add_payment') }}
                                     </x-button.loading>
                                 </button>
                             </div>

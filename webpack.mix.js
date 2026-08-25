@@ -42,7 +42,6 @@ mix
     .js('resources/assets/js/views/banking/transfers.js', 'public/js/banking/transfers.min.js')
     .js('resources/assets/js/views/banking/reconciliations.js', 'public/js/banking/reconciliations.min.js')
     .js('resources/assets/js/views/banking/loans.js', 'public/js/banking/loans.min.js')
-    .js('resources/assets/js/views/banking/investments.js', 'public/js/banking/investments.min.js')
 
     // Common
     .js('resources/assets/js/views/common/contacts.js', 'public/js/common/contacts.min.js')

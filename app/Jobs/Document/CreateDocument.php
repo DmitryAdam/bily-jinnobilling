@@ -61,9 +61,6 @@ class CreateDocument extends Job implements HasOwner, HasSource, ShouldCreate
      */
     public function authorize(): void
     {
-        $limit = $this->getAnyActionLimitOfPlan();
-        if (! $limit->action_status && ! empty($this->request['type']) && ($this->request['type'] == 'invoice')) {
-            throw new \Exception($limit->message);
-        }
+        //
     }
 }

@@ -1,24 +1,24 @@
 <x-layouts.admin>
     <x-slot name="title">
-        {{ trans('general.title.edit', ['type' => trans_choice('general.loans', 1)]) }}
+        {{ trans('general.title.edit', ['type' => trans_choice('general.' . $slug, 1)]) }}
     </x-slot>
 
     <x-slot name="favorite"
-        title="{{ trans('general.title.edit', ['type' => trans_choice('general.loans', 1)]) }}"
-        icon="account_balance_wallet"
-        :route="['loans.edit', $loan->id]"
+        title="{{ trans('general.title.edit', ['type' => trans_choice('general.' . $slug, 1)]) }}"
+        icon="{{ $icon }}"
+        :route="[$slug . '.edit', $loan->id]"
     ></x-slot>
 
     <x-slot name="content">
         <x-form.container>
-            <x-form id="loan" :route="['loans.update', $loan->id]" :model="$loan" method="PATCH">
+            <x-form id="{{ $type }}" :route="[$slug . '.update', $loan->id]" :model="$loan" method="PATCH">
                 <x-form.section>
                     <x-slot name="head">
-                        <x-form.section.head title="{{ trans('general.general') }}" description="{{ trans('loans.form_description.edit') }}" />
+                        <x-form.section.head title="{{ trans('general.general') }}" description="{{ trans($lang . '.form_description.edit') }}" />
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.text name="contact_name" label="{{ trans('loans.contact_name') }}" value="{{ $loan->contact_name }}" />
+                        <x-form.group.text name="contact_name" label="{{ trans($lang . '.contact_name') }}" value="{{ $loan->contact_name }}" />
 
                         <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" :selected="$loan->account_id" disabled />
 
@@ -32,7 +32,7 @@
 
                 <x-form.section>
                     <x-slot name="foot">
-                        <x-form.buttons cancel-route="loans.index" />
+                        <x-form.buttons cancel-route="{{ $slug }}.index" />
                     </x-slot>
                 </x-form.section>
             </x-form>

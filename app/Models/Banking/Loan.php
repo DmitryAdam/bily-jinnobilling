@@ -8,8 +8,34 @@ class Loan extends Model
 {
     protected $table = 'loans';
 
+    /**
+     * A loan pays money out and takes it back; an investment does the reverse.
+     * Everything else about the two is identical.
+     */
+    public const TYPES = [
+        'loan' => [
+            'slug'             => 'loans',
+            'prefix'           => 'LOAN-',
+            'icon'             => 'account_balance_wallet',
+            'principal_type'   => Transaction::EXPENSE_TYPE,
+            'payment_type'     => Transaction::INCOME_TYPE,
+            'category'         => 'loan',
+            'payment_category' => 'loan-payment',
+        ],
+        'investment' => [
+            'slug'             => 'investments',
+            'prefix'           => 'INVEST-',
+            'icon'             => 'savings',
+            'principal_type'   => Transaction::INCOME_TYPE,
+            'payment_type'     => Transaction::EXPENSE_TYPE,
+            'category'         => 'investment',
+            'payment_category' => 'investment-payment',
+        ],
+    ];
+
     protected $fillable = [
         'company_id',
+        'type',
         'loan_number',
         'account_id',
         'transaction_id',
@@ -44,22 +70,27 @@ class Loan extends Model
         'status',
     ];
 
-    public static function getNextLoanNumber($company_id = null): string
+    public function getConfigAttribute(): array
     {
-        $company_id = $company_id ?: company_id();
+        return static::TYPES[$this->type] ?? static::TYPES['loan'];
+    }
 
-        $last = \DB::table('loans')
-            ->where('company_id', $company_id)
-            ->orderBy('loan_number', 'desc')
-            ->value('loan_number');
+    public function getSlugAttribute(): string
+    {
+        return $this->config['slug'];
+    }
 
-        if ($last) {
-            $number = (int) str_replace('LOAN-', '', $last) + 1;
-        } else {
-            $number = 1;
-        }
+    public static function getNextNumber(string $type = 'loan'): string
+    {
+        $prefix = (static::TYPES[$type] ?? static::TYPES['loan'])['prefix'];
 
-        return 'LOAN-' . str_pad($number, 5, '0', STR_PAD_LEFT);
+        // ponytail: reads every number for the type; a max() on a numeric
+        // column would scale, but loans are counted in hundreds, not millions
+        $highest = static::type($type)->pluck('loan_number')
+            ->map(fn ($number) => (int) str_replace($prefix, '', (string) $number))
+            ->max();
+
+        return $prefix . str_pad(($highest ?? 0) + 1, 5, '0', STR_PAD_LEFT);
     }
 
     public function account()
@@ -94,10 +125,15 @@ class Loan extends Model
         $paid = $this->payments()->sum('amount');
 
         $this->update(['status' => match (true) {
-            $paid <= 0            => 'active',
+            $paid <= 0             => 'active',
             $paid >= $this->amount => 'paid',
             default                => 'partial',
         }]);
+    }
+
+    public function scopeType($query, string $type)
+    {
+        return $query->where('type', $type);
     }
 
     public function scopeActive($query)
@@ -112,35 +148,37 @@ class Loan extends Model
 
     public function getLineActionsAttribute()
     {
+        $slug = $this->slug;
+
         $actions = [];
 
         $actions[] = [
             'title' => trans('general.show'),
             'icon' => 'visibility',
-            'url' => route('loans.show', $this->id),
-            'permission' => 'read-banking-loans',
+            'url' => route($slug . '.show', $this->id),
+            'permission' => 'read-banking-' . $slug,
             'attributes' => [
-                'id' => 'index-line-actions-show-loan-' . $this->id,
+                'id' => 'index-line-actions-show-' . $this->type . '-' . $this->id,
             ],
         ];
 
         $actions[] = [
             'title' => trans('general.edit'),
             'icon' => 'edit',
-            'url' => route('loans.edit', $this->id),
-            'permission' => 'update-banking-loans',
+            'url' => route($slug . '.edit', $this->id),
+            'permission' => 'update-banking-' . $slug,
             'attributes' => [
-                'id' => 'index-line-actions-edit-loan-' . $this->id,
+                'id' => 'index-line-actions-edit-' . $this->type . '-' . $this->id,
             ],
         ];
 
         $actions[] = [
             'type' => 'delete',
             'icon' => 'delete',
-            'route' => 'loans.destroy',
-            'permission' => 'delete-banking-loans',
+            'route' => $slug . '.destroy',
+            'permission' => 'delete-banking-' . $slug,
             'attributes' => [
-                'id' => 'index-line-actions-delete-loan-' . $this->id,
+                'id' => 'index-line-actions-delete-' . $this->type . '-' . $this->id,
             ],
             'model' => $this,
         ];

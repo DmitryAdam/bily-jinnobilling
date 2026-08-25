@@ -178,13 +178,20 @@ Route::group(['prefix' => 'banking'], function () {
     Route::get('transfers/export', 'Banking\Transfers@export')->name('transfers.export');
     Route::resource('transfers', 'Banking\Transfers', ['middleware' => ['date.format', 'money', 'dropzone']]);
 
-    Route::post('loans/{loan}/payments', 'Banking\Loans@paymentStore')->middleware(['date.format', 'money'])->name('loans.payments.store');
-    Route::delete('loans/{loan}/payments/{payment}', 'Banking\Loans@paymentDestroy')->name('loans.payments.destroy');
-    Route::resource('loans', 'Banking\Loans', ['middleware' => ['date.format', 'money']]);
+    // Same records, same controller; only the money direction differs
+    foreach (['loans' => 'Loans', 'investments' => 'Investments'] as $slug => $controller) {
+        Route::post($slug . '/{loan}/payments', 'Banking\\' . $controller . '@paymentStore')
+            ->middleware(['date.format', 'money'])
+            ->name($slug . '.payments.store');
 
-    Route::post('investments/{investment}/payments', 'Banking\Investments@paymentStore')->middleware(['date.format', 'money'])->name('investments.payments.store');
-    Route::delete('investments/{investment}/payments/{payment}', 'Banking\Investments@paymentDestroy')->name('investments.payments.destroy');
-    Route::resource('investments', 'Banking\Investments', ['middleware' => ['date.format', 'money']]);
+        Route::delete($slug . '/{loan}/payments/{payment}', 'Banking\\' . $controller . '@paymentDestroy')
+            ->name($slug . '.payments.destroy');
+
+        Route::resource($slug, 'Banking\\' . $controller, [
+            'middleware' => ['date.format', 'money'],
+            'parameters' => [$slug => 'loan'],
+        ]);
+    }
 
     Route::post('reconciliations/calculate', 'Banking\Reconciliations@calculate')->middleware(['money']);
     Route::patch('reconciliations/calculate', 'Banking\Reconciliations@calculate')->middleware(['money']);

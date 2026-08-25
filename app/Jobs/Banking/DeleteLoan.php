@@ -12,13 +12,13 @@ class DeleteLoan extends Job implements ShouldDelete
     {
         // Prevent deletion if loan has payments
         if ($this->model->payments()->count() > 0) {
-            $message = trans('loans.messages.has_payments');
+            $message = trans($this->model->slug . '.messages.has_payments');
 
             throw new \Exception($message);
         }
 
         \DB::transaction(function () {
-            // Delete the loan's expense transaction (money returns to account)
+            // Reverse the principal transaction
             if ($this->model->transaction) {
                 $this->dispatch(new DeleteTransaction($this->model->transaction));
             }

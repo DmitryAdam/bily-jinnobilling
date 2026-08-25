@@ -1,24 +1,24 @@
 <x-layouts.admin>
     <x-slot name="title">
-        {{ trans('general.title.new', ['type' => trans_choice('general.loans', 1)]) }}
+        {{ trans('general.title.new', ['type' => trans_choice('general.' . $slug, 1)]) }}
     </x-slot>
 
     <x-slot name="favorite"
-        title="{{ trans('general.title.new', ['type' => trans_choice('general.loans', 1)]) }}"
-        icon="account_balance_wallet"
-        route="loans.create"
+        title="{{ trans('general.title.new', ['type' => trans_choice('general.' . $slug, 1)]) }}"
+        icon="{{ $icon }}"
+        route="{{ $slug }}.create"
     ></x-slot>
 
     <x-slot name="content">
         <x-form.container>
-            <x-form id="loan" route="loans.store">
+            <x-form id="{{ $type }}" route="{{ $slug }}.store">
                 <x-form.section>
                     <x-slot name="head">
-                        <x-form.section.head title="{{ trans('general.general') }}" description="{{ trans('loans.form_description.general') }}" />
+                        <x-form.section.head title="{{ trans('general.general') }}" description="{{ trans($lang . '.form_description.general') }}" />
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.text name="contact_name" label="{{ trans('loans.contact_name') }}" />
+                        <x-form.group.text name="contact_name" label="{{ trans($lang . '.contact_name') }}" />
 
                         <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" />
 
@@ -32,7 +32,7 @@
 
                 <x-form.section>
                     <x-slot name="head">
-                        <x-form.section.head title="{{ trans_choice('general.others', 1) }}" description="{{ trans('loans.form_description.other') }}" />
+                        <x-form.section.head title="{{ trans_choice('general.others', 1) }}" description="{{ trans($lang . '.form_description.other') }}" />
                     </x-slot>
 
                     <x-slot name="body">
@@ -44,7 +44,7 @@
 
                 <x-form.section>
                     <x-slot name="foot">
-                        <x-form.buttons cancel-route="loans.index" />
+                        <x-form.buttons cancel-route="{{ $slug }}.index" />
                     </x-slot>
                 </x-form.section>
             </x-form>
