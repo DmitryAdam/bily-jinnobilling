@@ -27,7 +27,7 @@
         </div>
 
         <div class="my-3">
-            <x-link href="{{ $previewUrl }}" class="flex items-center justify-center gap-x-2 text-purple" override="class" target="_blank">
+            <x-link href="{{ $signedUrl }}" class="flex items-center justify-center gap-x-2 text-purple" override="class" target="_blank">
                 {{ trans('general.preview_in_window') }} <x-icon icon="open_in_new" />
             </x-link>
         </div>
