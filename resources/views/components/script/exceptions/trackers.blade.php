@@ -1,4 +1,4 @@
-@if (in_array($channel, ['bugsnag', 'sentry']))
+@if ($channel === 'sentry')
     <script type="text/javascript"><!--
         var exception_tracker = {
             channel: '{{ $channel }}',

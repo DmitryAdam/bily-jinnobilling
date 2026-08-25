@@ -6,6 +6,7 @@ use App\Abstracts\Http\Controller;
 use App\Exports\Sales\Invoices\Invoices as Export;
 use App\Http\Requests\Document\Document as Request;
 use App\Jobs\Document\CreateDocument;
+use App\Jobs\Document\CreateDocumentHistory;
 use App\Jobs\Document\DeleteDocument;
 use App\Jobs\Document\DuplicateDocument;
 use App\Jobs\Document\DownloadDocument;
@@ -224,9 +225,11 @@ class Quotations extends Controller
      */
     public function markAccepted(Document $quotation)
     {
-        event(new \App\Events\Document\QuotationAccepted($quotation));
+        $quotation->update(['status' => 'accepted']);
 
         $message = trans('quotations.messages.marked_accepted', ['type' => trans_choice('general.quotations', 1)]);
+
+        $this->dispatch(new CreateDocumentHistory($quotation, 0, $message));
 
         flash($message)->success();
 
@@ -242,9 +245,11 @@ class Quotations extends Controller
      */
     public function markRejected(Document $quotation)
     {
-        event(new \App\Events\Document\QuotationRejected($quotation));
+        $quotation->update(['status' => 'rejected']);
 
         $message = trans('quotations.messages.marked_rejected', ['type' => trans_choice('general.quotations', 1)]);
+
+        $this->dispatch(new CreateDocumentHistory($quotation, 0, $message));
 
         flash($message)->success();
 

@@ -17,11 +17,12 @@ class App extends Provider
      */
     public function register()
     {
-        if (config('app.installed') && config('app.debug')) {
+        // Both are require-dev, so absent on a --no-dev install
+        if (config('app.installed') && config('app.debug') && class_exists(\Barryvdh\Debugbar\ServiceProvider::class)) {
             $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         }
 
-        if (! env_is_production()) {
+        if (! env_is_production() && class_exists(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class)) {
             $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
         }
 

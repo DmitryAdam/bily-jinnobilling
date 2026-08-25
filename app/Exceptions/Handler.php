@@ -57,11 +57,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            if (config('logging.default') == 'bugsnag') {
-                call_user_func(config('bugsnag.before_send'), $e);
-            }
-        });
+        //
     }
 
     /**

@@ -61,9 +61,6 @@ class Trackers extends Component
         }
 
         switch ($this->channel) {
-            case 'bugsnag':
-                $action = config('bugsnag.api_key');
-                break;
             case 'sentry':
                 $action = config('sentry.dsn');
                 break;
@@ -97,11 +94,6 @@ class Trackers extends Component
         }
 
         switch ($this->channel) {
-            case 'bugsnag':
-                $params = [
-                    'app_version' => version('short'),
-                ];
-                break;
             case 'sentry':
                 $params = [
                     'release' => version('short'),

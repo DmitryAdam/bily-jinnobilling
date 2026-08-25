@@ -39,15 +39,11 @@ import GLightbox from 'glightbox';
 
 Swiper.use([Navigation, Pagination]);
 
-import Bugsnag from './../exceptions/trackers/bugsnag';
 import Sentry from './../exceptions/trackers/sentry';
 
 // Exception Tracket start here!!s
 if (typeof exception_tracker != 'undefined') {
     switch (exception_tracker.channel) {
-        case 'bugsnag':
-            Vue.use(Bugsnag);
-            break;
         case 'sentry':
             Vue.use(Sentry);
             break;
