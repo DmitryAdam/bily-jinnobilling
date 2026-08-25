@@ -114,22 +114,6 @@ class User extends Authenticatable implements HasLocalePreference
      */
     public function getPictureAttribute($value)
     {
-        // Check if we should use gravatar
-        if (setting('default.use_gravatar', '0') == '1') {
-            try {
-                // Check for gravatar
-                $url = 'https://www.gravatar.com/avatar/' . md5(strtolower($this->getAttribute('email'))) . '?size=90&d=404';
-
-                $client = new \GuzzleHttp\Client(['verify' => false]);
-
-                $client->request('GET', $url)->getBody()->getContents();
-
-                $value = $url;
-            } catch (\GuzzleHttp\Exception\RequestException $e) {
-                // 404 Not Found
-            }
-        }
-
         if (!empty($value)) {
             return $value;
         } elseif (! $this->hasMedia('picture')) {

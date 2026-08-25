@@ -18,55 +18,9 @@ class Versions
 
     public static function changelog()
     {
-        $output = '';
-
-        $url = 'https://api.github.com/repos/akaunting/akaunting/releases';
-
-        $http = new \GuzzleHttp\Client(['verify' => false]);
-
-        $json = $http->get($url, ['timeout' => 30])->getBody()->getContents();
-
-        if (empty($json)) {
-            return $output;
-        }
-
-        $releases = json_decode($json);
-
-        foreach ($releases as $release) {
-            if (version_compare($release->tag_name, version('short'), '<=')) {
-                continue;
-            }
-
-            if ($release->prerelease == true) {
-                continue;
-            }
-
-            if (empty($release->body)) {
-                continue;
-            }
-
-            if (empty($output)) {
-                $output .= '<div class="mx-6">';
-            } else {
-                $output .= '<div class="mx-6 my-6">';
-            }
-
-            $output .= '    <div class="mb-4">';
-            $output .= '        <h2>';
-            $output .= '            <span class="rounded-xl bg-green px-3 py-2 text-base font-medium text-white ring-1 ring-inset ring-green">';
-            $output .=                  $release->tag_name;
-            $output .= '            </span>';
-            $output .= '        </h2>';
-            $output .= '    </div>';
-
-            $output .=      Markdown::convertToHtml($release->body);
-
-            $output .= '</div>';
-
-            $output .= '<hr>';
-        }
-
-        return $output;
+        // Self-hosted install: no update check against api.github.com.
+        // To restore, put back the releases request this replaced.
+        return '';
     }
 
     public static function latest($alias)

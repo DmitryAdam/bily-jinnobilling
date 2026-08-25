@@ -167,9 +167,6 @@
                         </x-link>
                     </div>
 
-                    <div class="my-10">
-                        <img src="https://assets.akaunting.com/software/portal/invoice.gif" class="inline" alt="Get Started" />
-                    </div>
                 </div>
             </div>
 

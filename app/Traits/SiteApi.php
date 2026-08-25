@@ -15,32 +15,10 @@ trait SiteApi
 
     protected static function siteApiRequest($method, $path, $extra_data = [])
     {
-        $client = new Client(['verify' => false, 'base_uri' => static::$base_uri]);
-
-        $headers['headers'] = [
-            'Authorization' => 'Bearer ' . Info::getApiKey(),
-            'Accept'        => 'application/json',
-            'Referer'       => app()->runningInConsole() ? config('app.url') : url('/'),
-            'Akaunting'     => Version::short(),
-            'Language'      => language()->getShortCode(),
-            'Information'   => json_encode(Info::all()),
-        ];
-
-        $data = array_merge([
-            'timeout' => 30,
-            'referer' => true,
-            'http_errors' => false,
-        ], $extra_data);
-
-        $options = array_merge_recursive($data, $headers);
-
-        try {
-            $response = $client->request($method, $path, $options);
-        } catch (ConnectException | Exception | RequestException $e) {
-            $response = $e;
-        }
-
-        return $response;
+        // Self-hosted install: no calls to api.akaunting.com. Every caller
+        // already treats a falsy response as "nothing available".
+        // To restore, put back the Guzzle request this replaced.
+        return false;
     }
 
     public static function getResponse($method, $path, $data = [], $status_code = 200)
