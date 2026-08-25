@@ -284,6 +284,7 @@ return [
                 'prefix'                        => 'quotations',
                 'add_contact'                   => 'general.customers',
                 'issued_at'                     => 'quotations.quotation_date',
+                'document_number'               => 'quotations.quotation_number',
                 'due_at'                        => 'quotations.expiry_date',
                 'section_billing_description'   => 'quotations.form_description.billing',
             ],
