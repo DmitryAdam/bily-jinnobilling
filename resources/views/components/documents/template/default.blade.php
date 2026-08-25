@@ -64,18 +64,17 @@
                     @stack('company_tax_number_input_end')
 
                     @stack('company_phone_input_start')
-                    @if (! $hideCompanyPhone)
-                        @if (setting('company.phone'))
-                            <p>
-                                {{ setting('company.phone') }}
-                            </p>
-                        @endif
-                    @endif
                     @stack('company_phone_input_end')
 
                     @stack('company_email_input_start')
-                    @if (! $hideCompanyEmail)
-                        <p class="small-text">{{ setting('company.email') }}</p>
+                    @php
+                        $company_contacts = array_filter([
+                            $hideCompanyPhone ? '' : setting('company.phone'),
+                            $hideCompanyEmail ? '' : setting('company.email'),
+                        ]);
+                    @endphp
+                    @if ($company_contacts)
+                        <p>{{ implode(' · ', $company_contacts) }}</p>
                     @endif
                     @stack('company_email_input_end')
                 @endif

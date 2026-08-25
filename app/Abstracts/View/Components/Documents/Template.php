@@ -156,7 +156,7 @@ abstract class Template extends Component
         $this->hideCompanyDetails = $hideCompanyDetails;
         $this->hideCompanyName = $hideCompanyName;
         $this->hideCompanyAddress = $hideCompanyAddress;
-        $this->hideCompanyTaxNumber = $hideCompanyTaxNumber;
+        $this->hideCompanyTaxNumber = $hideCompanyTaxNumber || ! (float) optional($document)->items?->sum('tax');
         $this->hideCompanyPhone = $hideCompanyPhone;
         $this->hideCompanyEmail = $hideCompanyEmail;
         $this->hideContactInfo = $hideContactInfo;
