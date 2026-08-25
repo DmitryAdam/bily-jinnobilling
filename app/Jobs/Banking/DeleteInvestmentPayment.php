@@ -20,16 +20,7 @@ class DeleteInvestmentPayment extends Job implements ShouldDelete
 
             $this->model->delete();
 
-            // Recalculate investment status
-            $paid_total = $investment->payments()->sum('amount');
-
-            if ($paid_total <= 0) {
-                $investment->update(['status' => 'active']);
-            } elseif ($paid_total >= $investment->amount) {
-                $investment->update(['status' => 'paid']);
-            } else {
-                $investment->update(['status' => 'partial']);
-            }
+            $investment->refreshStatus();
         });
 
         return true;

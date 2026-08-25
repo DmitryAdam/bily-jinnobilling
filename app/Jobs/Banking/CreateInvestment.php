@@ -46,7 +46,7 @@ class CreateInvestment extends Job implements HasOwner, HasSource, ShouldCreate
                 'amount' => $this->request->get('amount'),
                 'contact_id' => 0,
                 'description' => $description,
-                'category_id' => $this->getInvestmentIncomeCategoryId(),
+                'category_id' => $this->getAutoCategoryId('investment'),
                 'payment_method' => $this->request->get('payment_method'),
                 'reference' => $this->request->get('reference'),
                 'created_from' => $this->request->get('created_from'),

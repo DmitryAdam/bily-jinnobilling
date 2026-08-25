@@ -46,7 +46,7 @@ class CreateInvestmentPayment extends Job implements HasOwner, HasSource, Should
                 'amount' => $this->request->get('amount'),
                 'contact_id' => 0,
                 'description' => $description,
-                'category_id' => $this->getInvestmentExpenseCategoryId(),
+                'category_id' => $this->getAutoCategoryId('investment-payment'),
                 'payment_method' => $this->request->get('payment_method'),
                 'reference' => $this->request->get('reference'),
                 'created_from' => $this->request->get('created_from'),
@@ -69,15 +69,7 @@ class CreateInvestmentPayment extends Job implements HasOwner, HasSource, Should
                 'created_by' => $this->request->get('created_by'),
             ]);
 
-            // Update investment status - refresh payments to include the newly created one
-            $investment->load('payments');
-            $paid_total = $investment->payments->sum('amount');
-
-            if ($paid_total >= $investment->amount) {
-                $investment->update(['status' => 'paid']);
-            } else {
-                $investment->update(['status' => 'partial']);
-            }
+            $investment->refreshStatus();
         });
 
         return $this->model;

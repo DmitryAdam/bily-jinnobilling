@@ -48,106 +48,43 @@ trait Categories
         return $id == $this->getTransferCategoryId();
     }
 
-    public function getLoanExpenseCategoryId(): mixed
+    /**
+     * Categories this app creates on demand, keyed by their created_from suffix.
+     */
+    public function getAutoCategories(): array
     {
-        return Cache::remember('loanExpenseCategoryId', 60, function () {
-            $id = Category::where('created_from', 'core::loan')->pluck('id')->first();
+        return [
+            'loan'               => ['expense', 'Piutang',         '#d4a017'],
+            'loan-payment'       => ['income',  'Bayar Piutang',   '#6da252'],
+            'investment'         => ['income',  'Investasi',       '#3b82f6'],
+            'investment-payment' => ['expense', 'Bayar Investasi', '#a855f7'],
+        ];
+    }
 
-            if (! $id) {
-                $category = Category::create([
-                    'company_id' => company_id(),
-                    'name' => 'Piutang',
-                    'type' => 'expense',
-                    'color' => '#d4a017',
-                    'enabled' => 1,
-                    'created_from' => 'core::loan',
-                ]);
+    public function getAutoCategoryId(string $key): mixed
+    {
+        [$type, $name, $color] = $this->getAutoCategories()[$key];
 
-                $id = $category->id;
-            }
-
-            return $id;
+        // Keyed by company: the same created_from exists once per company
+        return Cache::remember('autoCategoryId.' . company_id() . '.' . $key, 60, function () use ($key, $type, $name, $color) {
+            return Category::firstOrCreate(
+                ['created_from' => 'core::' . $key],
+                ['company_id' => company_id(), 'name' => $name, 'type' => $type, 'color' => $color, 'enabled' => 1]
+            )->id;
         });
     }
 
-    public function getLoanIncomeCategoryId(): mixed
-    {
-        return Cache::remember('loanIncomeCategoryId', 60, function () {
-            $id = Category::where('created_from', 'core::loan-payment')->pluck('id')->first();
-
-            if (! $id) {
-                $category = Category::create([
-                    'company_id' => company_id(),
-                    'name' => 'Bayar Piutang',
-                    'type' => 'income',
-                    'color' => '#6da252',
-                    'enabled' => 1,
-                    'created_from' => 'core::loan-payment',
-                ]);
-
-                $id = $category->id;
-            }
-
-            return $id;
-        });
-    }
-
-    public function getInvestmentIncomeCategoryId(): mixed
-    {
-        return Cache::remember('investmentIncomeCategoryId', 60, function () {
-            $id = Category::where('created_from', 'core::investment')->pluck('id')->first();
-
-            if (! $id) {
-                $category = Category::create([
-                    'company_id' => company_id(),
-                    'name' => 'Investasi',
-                    'type' => 'income',
-                    'color' => '#3b82f6',
-                    'enabled' => 1,
-                    'created_from' => 'core::investment',
-                ]);
-
-                $id = $category->id;
-            }
-
-            return $id;
-        });
-    }
-
-    public function getInvestmentExpenseCategoryId(): mixed
-    {
-        return Cache::remember('investmentExpenseCategoryId', 60, function () {
-            $id = Category::where('created_from', 'core::investment-payment')->pluck('id')->first();
-
-            if (! $id) {
-                $category = Category::create([
-                    'company_id' => company_id(),
-                    'name' => 'Bayar Investasi',
-                    'type' => 'expense',
-                    'color' => '#a855f7',
-                    'enabled' => 1,
-                    'created_from' => 'core::investment-payment',
-                ]);
-
-                $id = $category->id;
-            }
-
-            return $id;
-        });
-    }
-
-    public function isInvestmentCategory(): bool
+    public function isAutoCategory(string ...$keys): bool
     {
         $id = $this->id ?? $this->category->id ?? $this->model->id ?? 0;
 
-        return $id == $this->getInvestmentIncomeCategoryId() || $id == $this->getInvestmentExpenseCategoryId();
-    }
+        foreach ($keys as $key) {
+            if ($id == $this->getAutoCategoryId($key)) {
+                return true;
+            }
+        }
 
-    public function isLoanCategory(): bool
-    {
-        $id = $this->id ?? $this->category->id ?? $this->model->id ?? 0;
-
-        return $id == $this->getLoanExpenseCategoryId() || $id == $this->getLoanIncomeCategoryId();
+        return false;
     }
 
     public function getChildrenCategoryIds($category)

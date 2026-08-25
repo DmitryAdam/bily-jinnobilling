@@ -58,11 +58,9 @@ class Quotations extends Controller
             'media',
         ]);
 
-        $quotationVersion = app(QuotationVersion::class);
-        $versions = $quotationVersion->getVersionHistory($quotation);
-        $displayNumber = $quotationVersion->getDisplayNumber($quotation);
+        $versions = app(QuotationVersion::class)->getVersionHistory($quotation);
 
-        return view('sales.quotations.show', compact('quotation', 'versions', 'displayNumber'));
+        return view('sales.quotations.show', compact('quotation', 'versions'));
     }
 
     /**
@@ -199,93 +197,38 @@ class Quotations extends Controller
     }
 
     /**
-     * Mark the quotation as sent.
+     * Move the quotation to another status.
      *
      * @param  Document $quotation
+     * @param  string   $status
      *
      * @return Response
      */
-    public function markSent(Document $quotation)
+    public function mark(Document $quotation, string $status)
     {
-        event(new \App\Events\Document\DocumentMarkedSent($quotation));
+        // Statuses the document layer already owns fire their event; the
+        // quotation-only ones are set here.
+        $marks = [
+            'sent'      => [\App\Events\Document\DocumentMarkedSent::class, 'documents.messages.marked_sent'],
+            'cancelled' => [\App\Events\Document\DocumentCancelled::class,  'documents.messages.marked_cancelled'],
+            'restored'  => [\App\Events\Document\DocumentRestored::class,   'documents.messages.restored'],
+            'accepted'  => [null, 'quotations.messages.marked_accepted'],
+            'rejected'  => [null, 'quotations.messages.marked_rejected'],
+        ];
 
-        $message = trans('documents.messages.marked_sent', ['type' => trans_choice('general.quotations', 1)]);
+        abort_unless(isset($marks[$status]), 404);
 
-        flash($message)->success();
+        [$event, $key] = $marks[$status];
 
-        return redirect()->back();
-    }
+        $message = trans($key, ['type' => trans_choice('general.quotations', 1)]);
 
-    /**
-     * Mark the quotation as accepted.
-     *
-     * @param  Document $quotation
-     *
-     * @return Response
-     */
-    public function markAccepted(Document $quotation)
-    {
-        $quotation->update(['status' => 'accepted']);
+        if ($event) {
+            event(new $event($quotation));
+        } else {
+            $quotation->update(['status' => $status]);
 
-        $message = trans('quotations.messages.marked_accepted', ['type' => trans_choice('general.quotations', 1)]);
-
-        $this->dispatch(new CreateDocumentHistory($quotation, 0, $message));
-
-        flash($message)->success();
-
-        return redirect()->back();
-    }
-
-    /**
-     * Mark the quotation as rejected.
-     *
-     * @param  Document $quotation
-     *
-     * @return Response
-     */
-    public function markRejected(Document $quotation)
-    {
-        $quotation->update(['status' => 'rejected']);
-
-        $message = trans('quotations.messages.marked_rejected', ['type' => trans_choice('general.quotations', 1)]);
-
-        $this->dispatch(new CreateDocumentHistory($quotation, 0, $message));
-
-        flash($message)->success();
-
-        return redirect()->back();
-    }
-
-    /**
-     * Mark the quotation as cancelled.
-     *
-     * @param  Document $quotation
-     *
-     * @return Response
-     */
-    public function markCancelled(Document $quotation)
-    {
-        event(new \App\Events\Document\DocumentCancelled($quotation));
-
-        $message = trans('documents.messages.marked_cancelled', ['type' => trans_choice('general.quotations', 1)]);
-
-        flash($message)->success();
-
-        return redirect()->back();
-    }
-
-    /**
-     * Restore the quotation.
-     *
-     * @param  Document $quotation
-     *
-     * @return Response
-     */
-    public function restoreQuotation(Document $quotation)
-    {
-        event(new \App\Events\Document\DocumentRestored($quotation));
-
-        $message = trans('documents.messages.restored', ['type' => trans_choice('general.quotations', 1)]);
+            $this->dispatch(new CreateDocumentHistory($quotation, 0, $message));
+        }
 
         flash($message)->success();
 
@@ -301,10 +244,7 @@ class Quotations extends Controller
      */
     public function reviseForm(Document $quotation)
     {
-        $quotationVersion = app(QuotationVersion::class);
-        $displayNumber = $quotationVersion->getDisplayNumber($quotation);
-
-        return view('sales.quotations.revise', compact('quotation', 'displayNumber'));
+        return view('sales.quotations.revise', compact('quotation'));
     }
 
     /**
@@ -348,62 +288,29 @@ class Quotations extends Controller
      */
     public function convertToInvoice(Document $quotation)
     {
-        $quotation->load(['items.taxes', 'totals']);
+        $invoice = \DB::transaction(function () use ($quotation) {
+            $invoice = $quotation->duplicate();
 
-        $invoiceData = $quotation->toArray();
-        $invoiceData['type'] = Document::INVOICE_TYPE;
-        $invoiceData['status'] = 'draft';
-        unset(
-            $invoiceData['id'],
-            $invoiceData['version'],
-            $invoiceData['parent_id'],
-            $invoiceData['created_at'],
-            $invoiceData['updated_at'],
-            $invoiceData['deleted_at'],
-            $invoiceData['attachment'],
-            $invoiceData['amount_without_tax'],
-            $invoiceData['discount'],
-            $invoiceData['paid'],
-            $invoiceData['received_at'],
-            $invoiceData['status_label'],
-            $invoiceData['sent_at'],
-            $invoiceData['reconciled'],
-            $invoiceData['contact_location']
-        );
+            $invoice->fill([
+                'type'            => Document::INVOICE_TYPE,
+                'document_number' => app(\App\Utilities\DocumentNumber::class)
+                                        ->getNextNumber(Document::INVOICE_TYPE, $quotation->contact),
+                'parent_id'       => 0,
+                'version'         => 1,
+                'revision_notes'  => null,
+            ])->save();
 
-        // Build request-like data for CreateDocument
-        $request = new \App\Http\Requests\Document\Document();
-        $request->merge($invoiceData);
+            // The copied rows carry the quotation type on their own column
+            foreach (['items', 'item_taxes', 'totals'] as $relation) {
+                $invoice->{$relation}()->update(['type' => Document::INVOICE_TYPE]);
+            }
 
-        // Add items data
-        $items = [];
-        foreach ($quotation->items as $item) {
-            $itemData = [
-                'item_id' => $item->item_id,
-                'name' => $item->name,
-                'description' => $item->description,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'discount' => $item->discount_rate,
-                'tax_ids' => $item->taxes->pluck('tax_id')->toArray(),
-            ];
-            $items[] = $itemData;
-        }
-        $request->merge(['items' => $items]);
+            return $invoice;
+        });
 
-        $response = $this->ajaxDispatch(new CreateDocument($request));
+        flash(trans('quotations.messages.converted_to_invoice'))->success();
 
-        if ($response['success']) {
-            $message = trans('quotations.messages.converted_to_invoice');
-
-            flash($message)->success();
-
-            return redirect()->route('invoices.show', ['invoice' => $response['data']->id]);
-        }
-
-        flash($response['message'])->error()->important();
-
-        return redirect()->back();
+        return redirect()->route('invoices.show', ['invoice' => $invoice->id]);
     }
 
     /**

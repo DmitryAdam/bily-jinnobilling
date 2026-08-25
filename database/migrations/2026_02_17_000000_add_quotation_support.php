@@ -22,7 +22,8 @@ return new class extends Migration
 
         // Update unique index to include version (for quotation versioning)
         $tableName = DB::getTablePrefix() . 'documents';
-        $indexes = collect(DB::select("SHOW INDEX FROM `{$tableName}`"))->pluck('Key_name')->unique();
+        // doctrine/dbal is already required; SHOW INDEX is MySQL-only and breaks sqlite tests
+        $indexes = collect(Schema::getConnection()->getDoctrineSchemaManager()->listTableIndexes($tableName))->keys();
 
         $oldIndexName = DB::getTablePrefix() . 'documents_document_number_deleted_at_company_id_type_unique';
 

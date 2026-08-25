@@ -46,7 +46,7 @@ class CreateLoanPayment extends Job implements HasOwner, HasSource, ShouldCreate
                 'amount' => $this->request->get('amount'),
                 'contact_id' => 0,
                 'description' => $description,
-                'category_id' => $this->getLoanIncomeCategoryId(),
+                'category_id' => $this->getAutoCategoryId('loan-payment'),
                 'payment_method' => $this->request->get('payment_method'),
                 'reference' => $this->request->get('reference'),
                 'created_from' => $this->request->get('created_from'),
@@ -69,15 +69,7 @@ class CreateLoanPayment extends Job implements HasOwner, HasSource, ShouldCreate
                 'created_by' => $this->request->get('created_by'),
             ]);
 
-            // Update loan status - refresh payments to include the newly created one
-            $loan->load('payments');
-            $paid_total = $loan->payments->sum('amount');
-
-            if ($paid_total >= $loan->amount) {
-                $loan->update(['status' => 'paid']);
-            } else {
-                $loan->update(['status' => 'partial']);
-            }
+            $loan->refreshStatus();
         });
 
         return $this->model;

@@ -50,14 +50,14 @@ class DeleteCategory extends Job implements ShouldDelete
         }
 
         // Can not delete loan category
-        if ($this->model->isLoanCategory()) {
+        if ($this->model->isAutoCategory('loan', 'loan-payment')) {
             $message = trans('messages.error.loan_category', ['type' => $this->model->name]);
 
             throw new \Exception($message);
         }
 
         // Can not delete investment category
-        if ($this->model->isInvestmentCategory()) {
+        if ($this->model->isAutoCategory('investment', 'investment-payment')) {
             $message = trans('messages.error.investment_category', ['type' => $this->model->name]);
 
             throw new \Exception($message);

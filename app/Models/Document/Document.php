@@ -534,6 +534,19 @@ class Document extends Model
         return $amount;
     }
 
+    public function getDisplayNumberAttribute(): string
+    {
+        return $this->document_number . '-v' . $this->version;
+    }
+
+    public function scopeVersionsOf($query, self $quotation)
+    {
+        $root = $quotation->parent_id ?: $quotation->id;
+
+        return $query->where('type', self::QUOTATION_TYPE)
+                     ->where(fn ($q) => $q->where('id', $root)->orWhere('parent_id', $root));
+    }
+
     public function getTemplatePathAttribute($value = null)
     {
         if ($value) {
@@ -541,7 +554,7 @@ class Document extends Model
         }
 
         if ($this->type === self::QUOTATION_TYPE) {
-            return 'sales.quotations.print_' . setting('quotation.template', 'default');
+            return 'sales.quotations.print';
         }
 
         return 'sales.invoices.print_' . setting('invoice.template');

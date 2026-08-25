@@ -21,9 +21,8 @@ class Loans extends Controller
     {
         $loans = Loan::with('account', 'payments')->collect(['issued_at' => 'desc']);
 
-        $allLoans = Loan::with('payments')->where('company_id', company_id())->get();
-        $totalPiutang = $allLoans->sum('amount');
-        $totalPaid = $allLoans->sum(fn($l) => $l->paid_amount);
+        $totalPiutang = Loan::sum('amount');
+        $totalPaid = LoanPayment::sum('amount');
         $totalUnpaid = $totalPiutang - $totalPaid;
 
         $currency = default_currency();

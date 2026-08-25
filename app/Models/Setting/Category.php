@@ -285,7 +285,7 @@ class Category extends Model
             ],
         ];
 
-        if ($this->isTransferCategory() || $this->isLoanCategory() || $this->isInvestmentCategory()) {
+        if ($this->isTransferCategory() || $this->isAutoCategory('loan', 'loan-payment', 'investment', 'investment-payment')) {
             return $actions;
         }
 

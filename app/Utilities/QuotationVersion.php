@@ -12,29 +12,13 @@ use Illuminate\Support\Facades\DB;
 class QuotationVersion
 {
     /**
-     * Get the display number with version suffix.
-     */
-    public function getDisplayNumber(Document $quotation): string
-    {
-        return $quotation->document_number . '-v' . $quotation->version;
-    }
-
-    /**
      * Create a new version of the quotation.
      */
     public function createNewVersion(Document $quotation, string $revisionNotes = ''): Document
     {
         return DB::transaction(function () use ($quotation, $revisionNotes) {
-            // Find the root quotation ID (the one with parent_id = 0)
             $rootId = $quotation->parent_id ?: $quotation->id;
-
-            // Get the highest version number across all versions
-            $maxVersion = Document::where(function ($q) use ($rootId) {
-                $q->where('id', $rootId)
-                  ->orWhere('parent_id', $rootId);
-            })->where('type', Document::QUOTATION_TYPE)->max('version');
-
-            $newVersion = $maxVersion + 1;
+            $newVersion = Document::versionsOf($quotation)->max('version') + 1;
 
             // Create the new quotation version
             $newQuotation = $quotation->replicate([
@@ -85,14 +69,7 @@ class QuotationVersion
      */
     public function getVersionHistory(Document $quotation): Collection
     {
-        $rootId = $quotation->parent_id ?: $quotation->id;
-
-        return Document::where(function ($q) use ($rootId) {
-            $q->where('id', $rootId)
-              ->orWhere('parent_id', $rootId);
-        })->where('type', Document::QUOTATION_TYPE)
-          ->orderBy('version', 'asc')
-          ->get();
+        return Document::versionsOf($quotation)->orderBy('version')->get();
     }
 
     /**
@@ -100,13 +77,6 @@ class QuotationVersion
      */
     public function getLatestVersion(Document $quotation): Document
     {
-        $rootId = $quotation->parent_id ?: $quotation->id;
-
-        return Document::where(function ($q) use ($rootId) {
-            $q->where('id', $rootId)
-              ->orWhere('parent_id', $rootId);
-        })->where('type', Document::QUOTATION_TYPE)
-          ->orderBy('version', 'desc')
-          ->first();
+        return Document::versionsOf($quotation)->orderByDesc('version')->first();
     }
 }

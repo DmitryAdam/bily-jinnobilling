@@ -20,16 +20,7 @@ class DeleteLoanPayment extends Job implements ShouldDelete
 
             $this->model->delete();
 
-            // Recalculate loan status
-            $paid_total = $loan->payments()->sum('amount');
-
-            if ($paid_total <= 0) {
-                $loan->update(['status' => 'active']);
-            } elseif ($paid_total >= $loan->amount) {
-                $loan->update(['status' => 'paid']);
-            } else {
-                $loan->update(['status' => 'partial']);
-            }
+            $loan->refreshStatus();
         });
 
         return true;

@@ -21,9 +21,8 @@ class Investments extends Controller
     {
         $investments = Investment::with('account', 'payments')->collect(['issued_at' => 'desc']);
 
-        $allInvestments = Investment::with('payments')->where('company_id', company_id())->get();
-        $totalInvestasi = $allInvestments->sum('amount');
-        $totalPaid = $allInvestments->sum(fn($i) => $i->paid_amount);
+        $totalInvestasi = Investment::sum('amount');
+        $totalPaid = InvestmentPayment::sum('amount');
         $totalUnpaid = $totalInvestasi - $totalPaid;
 
         $currency = default_currency();

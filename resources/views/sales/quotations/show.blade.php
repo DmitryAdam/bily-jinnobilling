@@ -1,6 +1,6 @@
 <x-layouts.admin>
     <x-slot name="title">
-        {{ setting('quotation.title', trans_choice('general.quotations', 1)) . ': ' . $displayNumber }}
+        {{ setting('quotation.title', trans_choice('general.quotations', 1)) . ': ' . $quotation->display_number }}
     </x-slot>
 
     <x-slot name="status">

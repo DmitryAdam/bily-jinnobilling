@@ -88,11 +88,11 @@ Route::group(['prefix' => 'sales'], function () {
     Route::get('recurring-invoices/export', 'Sales\RecurringInvoices@export')->name('recurring-invoices.export');
     Route::resource('recurring-invoices', 'Sales\RecurringInvoices', ['middleware' => ['date.format', 'money', 'dropzone']]);
 
-    Route::get('quotations/{quotation}/sent', 'Sales\Quotations@markSent')->name('quotations.sent');
-    Route::get('quotations/{quotation}/accepted', 'Sales\Quotations@markAccepted')->name('quotations.accepted');
-    Route::get('quotations/{quotation}/rejected', 'Sales\Quotations@markRejected')->name('quotations.rejected');
-    Route::get('quotations/{quotation}/cancelled', 'Sales\Quotations@markCancelled')->name('quotations.cancelled');
-    Route::get('quotations/{quotation}/restore', 'Sales\Quotations@restoreQuotation')->name('quotations.restore');
+    foreach (['sent', 'accepted', 'rejected', 'cancelled', 'restored'] as $status) {
+        Route::get('quotations/{quotation}/' . $status, 'Sales\Quotations@mark')
+            ->defaults('status', $status)
+            ->name('quotations.' . $status);
+    }
     Route::get('quotations/{quotation}/revise', 'Sales\Quotations@reviseForm')->name('quotations.revise');
     Route::post('quotations/{quotation}/revise', 'Sales\Quotations@revise')->name('quotations.revise.store');
     Route::get('quotations/{quotation}/convert-to-invoice', 'Sales\Quotations@convertToInvoice')->name('quotations.convert-to-invoice');

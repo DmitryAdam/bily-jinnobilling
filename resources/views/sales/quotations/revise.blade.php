@@ -1,6 +1,6 @@
 <x-layouts.admin>
     <x-slot name="title">
-        {{ trans('quotations.revision.title') . ': ' . $displayNumber }}
+        {{ trans('quotations.revision.title') . ': ' . $quotation->display_number }}
     </x-slot>
 
     <x-slot name="content">
@@ -11,7 +11,7 @@
                 </h3>
 
                 <p class="text-sm text-gray-500 mb-6">
-                    {{ trans('quotations.revision.description', ['number' => $displayNumber, 'version' => $quotation->version + 1]) }}
+                    {{ trans('quotations.revision.description', ['number' => $quotation->display_number, 'version' => $quotation->version + 1]) }}
                 </p>
 
                 <form method="POST" action="{{ route('quotations.revise.store', $quotation->id) }}">

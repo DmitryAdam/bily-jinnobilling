@@ -89,6 +89,17 @@ class Investment extends Model
         return $this->amount - $this->paid_amount;
     }
 
+    public function refreshStatus(): void
+    {
+        $paid = $this->payments()->sum('amount');
+
+        $this->update(['status' => match (true) {
+            $paid <= 0            => 'active',
+            $paid >= $this->amount => 'paid',
+            default                => 'partial',
+        }]);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', '!=', 'paid');
