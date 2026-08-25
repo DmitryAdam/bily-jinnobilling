@@ -1,15 +1,15 @@
 @php
     $doc_type = $invoice->type;
-    $setting_prefix = config("type.document.$doc_type.setting.prefix", "invoice");
-    $is_payable = ! empty(config("type.document.$doc_type.transaction_type"));
-    $show_payment = $is_payable && ! empty($payment_methods) && ! in_array($invoice->status, ["paid", "cancelled"]);
+    $setting_prefix = config('type.document.' . $doc_type . '.setting.prefix', 'invoice');
+    $is_payable = ! empty(config('type.document.' . $doc_type . '.transaction_type'));
+    $show_payment = $is_payable && ! empty($payment_methods) && ! in_array($invoice->status, ['paid', 'cancelled']);
     $has_sidebar = $show_payment || $invoice->transactions->count();
 @endphp
 
 <div class="w-full lg:max-w-6xl px-4 lg:px-0  m-auto">
     <x-layouts.signed>
         <x-slot name="title">
-            {{ setting($setting_prefix . ".title", trans_choice("general." . Str::plural($doc_type), 1)) . ": " . $invoice->document_number }}
+            {{ setting($setting_prefix . '.title', trans_choice('general.' . Str::plural($doc_type), 1)) . ': ' . $invoice->document_number }}
         </x-slot>
 
         <x-slot name="buttons">
@@ -147,9 +147,9 @@
 
                 <div class="w-full {{ $has_sidebar ? 'lg:w-7/12' : '' }}">
                     <x-documents.show.template
-                        type="{{ $doc_type }}"
+                        :type="$doc_type"
                         :document="$invoice"
-                        document-template="{{ setting($setting_prefix . ".template", "default") }}"
+                        :document-template="setting($setting_prefix . '.template', 'default')"
                     />
                 </div>
             </div>
