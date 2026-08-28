@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Vinst & förlust',
     'expenses_by_category'      => 'Utgifter efter kategori',
     'account_balance'           => 'Konto saldo',
-    'bank_feeds'                => 'Anslut bankkonton',
     'currencies'                => 'Valutor',
 
     'view_report'               => 'Visa rapport',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Inkomster och utgifter inklusive obetalda fakturor och räkningar',
         'expenses_by_category'  => 'Största utgifterna över olika kategorier',
         'account_balance'       => 'Nuvarande saldo på dina bankkonton',
-        'bank_feeds'            => 'Importera dina transaktioner till Akaunting automatiskt </br>genom att ansluta dina bankkonton',
     ],
 
     'periods' => [

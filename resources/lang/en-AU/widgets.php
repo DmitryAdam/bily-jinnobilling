@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Profit & Loss',
     'expenses_by_category'      => 'Expenses By Category',
     'account_balance'           => 'Account Balance',
-    'bank_feeds'                => 'Connect Bank Accounts',
     'currencies'                => 'Currencies',
 
     'view_report'               => 'View Report',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Income and expenses including unpaid invoices and bills',
         'expenses_by_category'  => 'Top expenses across various categories',
         'account_balance'       => 'Current balance of your bank accounts',
-        'bank_feeds'            => 'Import your transactions to Akaunting automatically </br>by connecting your bank accounts',
     ],
 
     'periods' => [

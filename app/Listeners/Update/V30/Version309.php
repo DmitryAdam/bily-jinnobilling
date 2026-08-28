@@ -43,7 +43,6 @@ class Version309 extends Listener
                 'auth-profile' => 'r,u',
                 'common-reports' => 'r',
                 'widgets-account-balance' => 'r',
-                'widgets-bank-feeds' => 'r',
                 'widgets-cash-flow' => 'r',
                 'widgets-currencies' => 'r',
                 'widgets-expenses-by-category' => 'r',

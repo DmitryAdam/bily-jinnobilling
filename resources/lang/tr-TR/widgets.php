@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Kar & Zarar',
     'expenses_by_category'      => 'Gider Kategorileri',
     'account_balance'           => 'Hesap Bakiyesi',
-    'bank_feeds'                => 'Banka Hesaplarını Bağla',
     'currencies'                => 'Para Birimleri',
 
     'view_report'               => 'Raporu Görüntüle',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Ödenmemiş faturalar dahil gelir ve giderler',
         'expenses_by_category'  => 'Çeşitli kategorilerdeki en yüksek giderler',
         'account_balance'       => 'Banka hesaplarınızın mevcut bakiyesi',
-        'bank_feeds'            => 'Banka hesaplarınızı bağlayarak </br>işlemlerinizi Akaunting\'e otomatik olarak aktarın',
     ],
 
     'periods' => [

@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Revenus et dépenses',
     'expenses_by_category'      => 'Dépenses par catégorie',
     'account_balance'           => 'Solde du compte',
-    'bank_feeds'                => 'Connecter les comptes bancaires',
     'currencies'                => 'Devises',
 
     'view_report'               => 'Voir le rapport',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Revenus et dépenses, y compris les achats et les ventes encore impayées',
         'expenses_by_category'  => 'Répartition des dépenses par catégorie',
         'account_balance'       => 'Solde actuel de vos comptes bancaires',
-        'bank_feeds'            => 'Importez automatiquement vos transactions vers Akaunting </br>en connectant vos comptes bancaires',
     ],
 
     'periods' => [

@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Ganancias y Pérdidas',
     'expenses_by_category'      => 'Gastos por Categoría',
     'account_balance'           => 'Saldo de la cuenta',
-    'bank_feeds'                => 'Conectar cuentas bancarias',
     'currencies'                => 'Divisas',
 
     'view_report'               => 'Ver informe',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Ingresos y gastos, incluyendo facturas no pagadas y facturas',
         'expenses_by_category'  => 'Gastos más altos en varias categorías',
         'account_balance'       => 'Saldo actual de sus cuentas bancarias',
-        'bank_feeds'            => 'Importar tus transacciones a Akaunting automáticamente </br>conectando tus cuentas bancarias',
     ],
 
     'periods' => [

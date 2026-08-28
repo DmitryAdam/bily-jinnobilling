@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Zisk a ztráta',
     'expenses_by_category'      => 'Výdaje podle kategorie',
     'account_balance'           => 'Zůstatek na účtu',
-    'bank_feeds'                => 'Připojit bankovní účty',
     'currencies'                => 'Měny',
 
     'view_report'               => 'Zobrazit report',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Výnosy a náklady včetně nezaplacených faktur a účtů',
         'expenses_by_category'  => 'Nejvyšší výdaje v různých kategoriích',
         'account_balance'       => 'Aktuální zůstatek Vašich bankovních účtů',
-        'bank_feeds'            => 'Automaticky importovat vaše transakce do Akaunting </br>propojením vašich bankovních účtů',
     ],
 
     'periods' => [

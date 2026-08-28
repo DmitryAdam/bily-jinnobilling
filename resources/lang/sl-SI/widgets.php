@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Dobiček & Izguba',
     'expenses_by_category'      => 'Stroški po kategorijah',
     'account_balance'           => 'Stanje na računu',
-    'bank_feeds'                => 'Povežite bančni račun',
     'currencies'                => 'Valute',
 
     'view_report'               => 'Poglejte poročilo',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Prihodki in stroški, vključno z neplačanimi prejetimi in izdanimi računi',
         'expenses_by_category'  => 'Najvišji stroški glede na kategorijo',
         'account_balance'       => 'Trenutno stanje na vašem bančnem računu',
-        'bank_feeds'            => 'Uvozite transakcije </br>tako, da povežete svoj bančni račun',
     ],
 
     'periods' => [

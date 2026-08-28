@@ -140,7 +140,6 @@ class Version300 extends Listener
             'App\Widgets\ProfitLoss',
             'App\Widgets\ExpensesByCategory',
             'App\Widgets\AccountBalance',
-            'App\Widgets\BankFeeds',
         ];
 
         Log::channel('stdout')->info('Creating new widgets...');
@@ -361,7 +360,6 @@ class Version300 extends Listener
             'settings-invoice' => 'u',
             'settings-localisation' => 'u',
             'settings-schedule' => 'u',
-            'widgets-bank-feeds' => 'r',
             'widgets-payables' => 'r',
             'widgets-profit-loss' => 'r',
             'widgets-receivables' => 'r',

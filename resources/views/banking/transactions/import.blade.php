@@ -11,22 +11,6 @@
 
     <x-slot name="content">
         <div class="pt-6">
-            <div class="relative -m-2 flex items-center space-x-4 rounded-xl p-4 focus-within:ring-2 focus-within:ring-gray-500 hover:bg-gray-100">
-                <div>
-                    <h2 class="text-base font-semibold text-gray-900">
-                        <a href="{{ module_is_enabled('bank-feeds') ? route('bank-feeds.bank-connections.create') : route('apps.app.show', 'bank-feeds') }}" class="focus:outline-none">
-                            <span class="absolute inset-0" aria-hidden="true"></span>
-                            <span>{{ trans_choice('general.bank_feeds', 2) }}</span>
-                            <span aria-hidden="true"> &rarr;</span>
-                        </a>
-                    </h2>
-
-                    <p class="mt-1 text-sm text-gray-500">
-                        {{ trans('import.bank_feeds') }}
-                    </p>
-                </div>
-            </div>
-
             <ul role="list" class="mt-6 grid grid-cols-1 gap-x-8 gap-y-16 border-b border-t border-gray-200 py-6 sm:grid-cols-3">
                 <li class="flow-root">
                     <div class="relative -m-2 flex items-center space-x-4 rounded-xl p-4 focus-within:ring-2 focus-within:ring-gray-500 hover:bg-gray-100">

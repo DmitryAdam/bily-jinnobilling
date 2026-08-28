@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Fortjeneste & tap',
     'expenses_by_category'      => 'Utgifter etter kategori',
     'account_balance'           => 'Kontobalanse',
-    'bank_feeds'                => 'Koble til bankkontoer',
     'currencies'                => 'Valutaer',
 
     'view_report'               => 'Vis rapport',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Inntekter og utgifter inkludert ubetalte fakturaer og regninger',
         'expenses_by_category'  => 'Største utgifter mellom ulike kategorier',
         'account_balance'       => 'Gjeldende saldo på dine bankkonti',
-        'bank_feeds'            => 'Importer dine transaksjoner til Akaunting automatisk </br>ved å koble til dine bankkontoer',
     ],
 
     'periods' => [

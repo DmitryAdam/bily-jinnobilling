@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Laba & Rugi',
     'expenses_by_category'      => 'Pengeluaran Berdasarkan Kategori',
     'account_balance'           => 'Saldo Rekening',
-    'bank_feeds'                => 'Hubungkan Rekening Bank',
     'currencies'                => 'Mata Uang',
 
     'view_report'               => 'Lihat Laporan',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Pendapatan dan pengeluaran termasuk faktur dan tagihan belum dibayar',
         'expenses_by_category'  => 'Pengeluaran terbesar di berbagai kategori',
         'account_balance'       => 'Saldo rekening bank Anda',
-        'bank_feeds'            => 'Impor transaksi Anda ke Akaunting secara otomatis</br>dengan menghubungkan rekening bank Anda',
     ],
 
     'periods' => [

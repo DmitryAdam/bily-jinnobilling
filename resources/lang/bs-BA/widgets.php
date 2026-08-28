@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Dobit i gubitak',
     'expenses_by_category'      => 'Troškovi po kategorijama',
     'account_balance'           => 'Stanje računa',
-    'bank_feeds'                => 'Povezani Racun',
     'currencies'                => 'Valute',
 
     'view_report'               => 'Pregledajte izvještaj',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Prihodi i rashodi uključujući neplaćene fakture i račune',
         'expenses_by_category'  => 'Najveći troškovi u različitim kategorijama',
         'account_balance'       => 'Trenutno stanje vaših bankovnih računa',
-        'bank_feeds'            => 'Uvezite svoje transakcije u Akaunting automatski </br>povezujući svoje bankovne račune',
     ],
 
     'periods' => [

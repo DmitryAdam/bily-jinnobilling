@@ -8,7 +8,6 @@ return [
     'profit_loss'               => '利润与损失',
     'expenses_by_category'      => '支出分类',
     'account_balance'           => '账户余额',
-    'bank_feeds'                => '连接银行账户',
     'currencies'                => '货币',
 
     'view_report'               => '查看报告',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => '收入和支出(包括未支付的发票和帐单)',
         'expenses_by_category'  => '不同类别的最高支出',
         'account_balance'       => '您的银行账户当前余额',
-        'bank_feeds'            => '连接您的银行账户自动导入您的交易到Akaunting。',
     ],
 
     'periods' => [

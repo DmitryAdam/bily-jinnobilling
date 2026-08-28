@@ -75,7 +75,6 @@ return [
     'your_notifications'    => 'Uw mededeling|Uw mededelingen',
     'employees'             => 'Werknemer|Werknemers',
     'contact_persons'       => 'Contactpersoon|Contactpersonen',
-    'bank_feeds'            => 'Bank Feed|Bank Feeds',
     'receipts'              => 'Ontvangstbewijs|Ontvangstbewijzen',
     'discounts'             => 'Kortingen|Kortingen',
     'ofx'                   => 'OFX',

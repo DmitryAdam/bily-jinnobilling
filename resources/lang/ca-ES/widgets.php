@@ -8,7 +8,6 @@ return [
     'profit_loss'               => 'Guanys i pèrdues',
     'expenses_by_category'      => 'Despeses per categoria',
     'account_balance'           => 'Balanç',
-    'bank_feeds'                => 'Connecta comptes bancaris',
     'currencies'                => 'Monedes',
 
     'view_report'               => 'Visualitza l\'informe',
@@ -22,7 +21,6 @@ return [
         'profit_loss'           => 'Ingressos i despeses incloses les factures de clients i proveïdors impagades',
         'expenses_by_category'  => 'Principals despeses en vàries categories',
         'account_balance'       => 'Saldo actual dels teus comptes bancaris',
-        'bank_feeds'            => 'Importa les teves transaccions a Akaunting automàticament </br>connectant els vostres comptes bancaris',
     ],
 
     'periods' => [

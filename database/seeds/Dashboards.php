@@ -40,7 +40,6 @@ class Dashboards extends Seeder
                 'App\Widgets\ProfitLoss',
                 'App\Widgets\ExpensesByCategory',
                 'App\Widgets\AccountBalance',
-                'App\Widgets\BankFeeds',
             ],
             'users' => $user_id,
             'created_from' => 'core::seed',
