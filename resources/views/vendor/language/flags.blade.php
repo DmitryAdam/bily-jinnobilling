@@ -2,7 +2,7 @@
     <a href="#!" class="list-group-item list-group-item-action">
         <div class="row align-items-center">
         <div class="col-auto">
-            <img src="{{ asset('vendor/akaunting/language/src/Resources/assets/img/flags/'. language()->country($code) .'.png') }}" alt="{{ $name }}" width="{{ config('language.flags.width') }}" />
+            <img src="{{ asset('vendor/akaunting/laravel-language/src/Resources/assets/img/flags/'. language()->country($code) .'.png') }}" alt="{{ $name }}" width="{{ config('language.flags.width') }}" />
         </div>
             <div class="col ml--2">
                 <div class="d-flex justify-content-between align-items-center">
