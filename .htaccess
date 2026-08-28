@@ -11,8 +11,9 @@
 
     RewriteEngine On
 
-    # Redirect to public/ folder if not already
+    # Redirect to public/ folder if not already (module/vendor assets live outside public/)
     RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_URI} !^/(modules|vendor)/
     RewriteRule ^(.*)$ /public/$1 [L]
 
     # Prevent Direct Access to Protected Files
