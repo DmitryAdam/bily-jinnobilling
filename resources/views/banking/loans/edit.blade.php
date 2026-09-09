@@ -11,7 +11,8 @@
 
     <x-slot name="content">
         <x-form.container>
-            <x-form id="{{ $type }}" :route="[$slug . '.update', $loan->id]" :model="$loan" method="PATCH">
+            {{-- id stays 'loan' for investments too: loans.js binds Form('loan') --}}
+            <x-form id="loan" :route="[$slug . '.update', $loan->id]" :model="$loan" method="PATCH">
                 <x-form.section>
                     <x-slot name="head">
                         <x-form.section.head title="{{ trans('general.general') }}" description="{{ trans($lang . '.form_description.edit') }}" />
