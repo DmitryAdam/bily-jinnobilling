@@ -86,7 +86,8 @@ class Loan extends Model
 
         // ponytail: reads every number for the type; a max() on a numeric
         // column would scale, but loans are counted in hundreds, not millions
-        $highest = static::type($type)->pluck('loan_number')
+        // withTrashed: the unique index still counts soft-deleted numbers
+        $highest = static::withTrashed()->type($type)->pluck('loan_number')
             ->map(fn ($number) => (int) str_replace($prefix, '', (string) $number))
             ->max();
 
