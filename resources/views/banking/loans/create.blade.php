@@ -19,15 +19,15 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.text name="contact_name" label="{{ trans($lang . '.contact_name') }}" />
+                        <x-form.group.text name="contact_name" label="{{ trans($lang . '.contact_name') }}" :value="$source->contact_name ?? null" />
 
-                        <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" />
+                        <x-form.group.select name="account_id" label="{{ trans_choice('general.accounts', 1) }}" :options="$accounts" :selected="$source->account_id ?? null" />
 
                         <x-form.group.date name="issued_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ Date::now()->toDateString() }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" />
 
-                        <x-form.group.money name="amount" label="{{ trans('general.amount') }}" value="0" :currency="$currency" dynamicCurrency="currency" />
+                        <x-form.group.money name="amount" label="{{ trans('general.amount') }}" value="{{ $source->amount ?? 0 }}" :currency="$currency" dynamicCurrency="currency" />
 
-                        <x-form.group.textarea name="description" label="{{ trans('general.description') }}" not-required />
+                        <x-form.group.textarea name="description" label="{{ trans('general.description') }}" :value="$source->description ?? null" not-required />
                     </x-slot>
                 </x-form.section>
 
@@ -37,9 +37,9 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.payment-method />
+                        <x-form.group.payment-method :selected="$source->payment_method ?? null" />
 
-                        <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required />
+                        <x-form.group.text name="reference" label="{{ trans('general.reference') }}" :value="$source->reference ?? null" not-required />
                     </x-slot>
                 </x-form.section>
 

@@ -10,6 +10,12 @@
     ></x-slot>
 
     <x-slot name="buttons">
+        @can('create-banking-' . $slug)
+            <x-link href="{{ route($slug . '.create', ['duplicate' => $loan->id]) }}">
+                {{ trans('general.duplicate') }}
+            </x-link>
+        @endcan
+
         <x-link href="{{ route($slug . '.index') }}">
             {{ trans('general.go_back', ['type' => trans_choice('general.' . $slug, 2)]) }}
         </x-link>

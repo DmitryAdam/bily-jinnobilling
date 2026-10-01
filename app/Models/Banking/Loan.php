@@ -173,6 +173,16 @@ class Loan extends Model
         ];
 
         $actions[] = [
+            'title' => trans('general.duplicate'),
+            'icon' => 'file_copy',
+            'url' => route($slug . '.create', ['duplicate' => $this->id]),
+            'permission' => 'create-banking-' . $slug,
+            'attributes' => [
+                'id' => 'index-line-actions-duplicate-' . $this->type . '-' . $this->id,
+            ],
+        ];
+
+        $actions[] = [
             'type' => 'delete',
             'icon' => 'delete',
             'route' => $slug . '.destroy',

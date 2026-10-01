@@ -65,9 +65,13 @@ class Loans extends Controller
 
     public function create()
     {
+        // ?duplicate={id} prefills everything but the date, which stays today
+        $source = request('duplicate') ? Loan::type($this->type)->find(request('duplicate')) : null;
+
         return view('banking.loans.create', $this->chrome([
+            'source'   => $source,
             'accounts' => $this->accounts(),
-            'currency' => Currency::where('code', default_currency())->first(),
+            'currency' => Currency::where('code', $source->currency_code ?? default_currency())->first(),
         ]));
     }
 
