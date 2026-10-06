@@ -193,7 +193,10 @@ class Quotations extends Controller
      */
     public function export()
     {
-        return $this->exportExcel(new Export, trans_choice('general.quotations', 2));
+        $export = new Export;
+        $export->type = 'quotation';
+
+        return $this->exportExcel($export, trans_choice('general.quotations', 2));
     }
 
     /**

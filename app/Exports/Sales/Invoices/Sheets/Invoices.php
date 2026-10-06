@@ -9,9 +9,11 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class Invoices extends Export implements WithColumnFormatting
 {
+    public $type = 'invoice';
+
     public function collection()
     {
-        return Model::with('category')->invoice()->collectForExport($this->ids, ['document_number' => 'desc']);
+        return Model::with('category')->where('type', $this->type)->collectForExport($this->ids, ['document_number' => 'desc']);
     }
 
     public function map($model): array

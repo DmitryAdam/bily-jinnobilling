@@ -8,9 +8,11 @@ use App\Interfaces\Export\WithParentSheet;
 
 class InvoiceItemTaxes extends Export implements WithParentSheet
 {
+    public $type = 'invoice';
+
     public function collection()
     {
-        return Model::with('document', 'item', 'tax')->invoice()->collectForExport($this->ids, null, 'document_id');
+        return Model::with('document', 'item', 'tax')->where('type', $this->type)->collectForExport($this->ids, null, 'document_id');
     }
 
     public function map($model): array

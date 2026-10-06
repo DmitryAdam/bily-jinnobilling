@@ -22,15 +22,27 @@ class Invoices implements WithMultipleSheets
         $this->ids = $ids;
     }
 
+    public $type = 'invoice';
+
     public function sheets(): array
     {
-        return [
+        $sheets = array_map(function ($sheet) {
+            $sheet->type = $this->type;
+
+            return $sheet;
+        }, [
             new Base($this->ids),
             new InvoiceItems($this->ids),
             new InvoiceItemTaxes($this->ids),
             new InvoiceHistories($this->ids),
             new InvoiceTotals($this->ids),
-            new InvoiceTransactions($this->ids),
-        ];
+        ]);
+
+        // quotations have no payments
+        if ($this->type == 'invoice') {
+            $sheets[] = new InvoiceTransactions($this->ids);
+        }
+
+        return $sheets;
     }
 }
