@@ -25,7 +25,7 @@ class InvoiceItems extends Export implements WithParentSheet
 
         $model->invoice_number = $document->document_number;
         $model->item_name = $model->item->name;
-        $model->item_description = $model->item->description;
+        $model->item_description = $model->description ?: $model->item->description;
         $model->item_type = $model->item->type;
 
         return parent::map($model);
